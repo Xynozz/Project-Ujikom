@@ -20,7 +20,8 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="basic-default-company">Deskripsi</label>
-                            <textarea class="form-control" name="deskripsi" id="" cols="30" rows="3" value="{{ old('deskripsi', $kategori->deskripsi) }}">
+                            <textarea class="form-control" name="deskripsi" id="" cols="30" rows="3">
+                                {{ $kategori->deskripsi }}
                             </textarea>
                         </div>
                         <div class="mb-3">

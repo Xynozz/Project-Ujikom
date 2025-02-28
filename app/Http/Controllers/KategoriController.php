@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class KategoriController extends Controller
 {
@@ -45,7 +46,7 @@ class KategoriController extends Controller
 
         $kategori->save();
 
-        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil ditambahkan!');
+        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil disimpan!');;
     }
 
     public function edit($id)
@@ -53,7 +54,6 @@ class KategoriController extends Controller
         $kategori = Kategori::find($id);
         return view('admin.kategori.edit', compact('kategori'));
     }
-
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -79,7 +79,7 @@ class KategoriController extends Controller
 
         $kategori->save();
 
-        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diupdate!');
+        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diperbarui!');;
     }
 
     public function destroy($id)

@@ -38,7 +38,7 @@
                                         <option value="{{ $data->id }}" data-status="{{ $data->status }}">
                                             {{ $data->nama_wisata }}
                                             @if($data->status !== 'aktif')
-                                            (Tidak Aktif) 
+                                            (Tidak Aktif)
                                             @endif
                                         </option>
                                         @endforeach

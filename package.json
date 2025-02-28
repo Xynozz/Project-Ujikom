@@ -19,6 +19,7 @@
     },
     "dependencies": {
         "@selectize/selectize": "^0.15.2",
-        "notyf": "^3.10.0"
+        "notyf": "^3.10.0",
+        "sweetalert2": "^11.17.2"
     }
 }

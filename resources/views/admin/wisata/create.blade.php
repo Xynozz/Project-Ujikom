@@ -1,3 +1,4 @@
+<!-- filepath: /C:/laragon/www/Hetra_Pemesanan_Tiket/resources/views/admin/wisata/create.blade.php -->
 @extends('layouts.admin.frontend.template')
 
 @section('content')
@@ -47,27 +48,30 @@
                                     <input type="file" class="form-control" id="thumbnail" name="thumbnail" required />
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="short_video">Short Video</label>
-                                    <input type="file" class="form-control" id="short_video" name="short_video"
-                                        required />
+                                    <input type="file" class="form-control" id="short_video" name="short_video" required />
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="jam_operasional">Jam Operasional</label>
-                                    <input type="time" class="form-control" id="jam_operasional" name="jam_operasional"
-                                        placeholder="Masukan Lokasi" required />
+                                    <label class="form-label" for="jam_buka">Jam Buka</label>
+                                    <input type="time" class="form-control" id="jam_buka" name="jam_buka" required />
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label class="form-label" for="jam_tutup">Jam Tutup</label>
+                                    <input type="time" class="form-control" id="jam_tutup" name="jam_tutup" required />
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="status">Status</label>
-                                    <select class="form-select" id="status" name="status" required>
-                                        <option value="" selected disabled>-- Pilih Status --</option>
-                                        <option value="aktif">Aktif</option>
-                                        <option value="tidak_aktif">Tidak Aktif</option>
+                                    <select class="form-control" id="status" name="status">
+                                        <option value="aktif" {{ old('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                        <option value="tidak_aktif" {{ old('status') == 'tidak_aktif' ? 'selected' : '' }}>Tidak Aktif</option>
                                     </select>
                                 </div>
                             </div>
@@ -75,16 +79,18 @@
                                 <div class="mb-3">
                                     <label class="form-label" for="kategori_id">Kategori</label>
                                     <select class="form-select" id="kategori_id" name="kategori_id" required>
-                                        <option value="" selected disabled>-- Pilih Kategori --</option>
-                                        @foreach ($kategori as $data)
-                                        <option value="{{ $data->id }}">{{ $data->nama_kategori }}</option>
+                                        <option value="">-- Pilih Kategori --</option>
+                                        @foreach($kategori as $kategori)
+                                            <option value="{{ $kategori->id }}" {{ old('kategori_id') == $kategori->id ? 'selected' : '' }}>
+                                                {{ $kategori->nama_kategori }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
                         </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                            <a href="{{ route('wisata.index') }}" class="btn btn-danger">Kembali</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <a href="{{ route('wisata.index') }}" class="btn btn-danger">Kembali</a>
                     </form>
                 </div>
             </div>

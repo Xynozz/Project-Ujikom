@@ -1,5 +1,8 @@
 @extends('layouts.admin.frontend.template')
 
+@push('css')
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css">
+@endpush
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pemesanan</span></h5>
@@ -9,85 +12,70 @@
             <h5 class="mb-0">Tabel Pemesanan</h5>
             <a href="{{ route('pemesanan.create') }}" class="btn btn-primary">Tambah</a>
         </div>
-        <div class="table-responsive text-nowrap">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Username</th>
-                        <th>Tiket</th>
-                        <th>Wisata</th>
-                        <th>Tanggal Pemesanan</th>
-                        <th>Jumlah Tiket</th>
-                        <th>Total Harga</th>
-                        <th>Status Pemesanan</th>
-                        <th>Status Pembayaran</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="table-border-bottom-0">
-                    @foreach ($pemesanan as $data)
-                    <tr>
-                        <td><strong>{{ $loop->iteration }}</strong></td>
-                        <td>{{ $data->user->username }}</td>
-                        <td>{{ $data->tiket->kode_tiket }}</td>
-                        <td>{{ $data->wisata->nama_wisata }}</td>
-                        <td>{{ Carbon\Carbon::parse($data->tanggal_pemesanan)->translatedFormat('d F Y') }}</td>
-                        <td>{{ $data->jumlah_tiket }}</td>
-                        <td>Rp {{ number_format($data->total_harga, 0, ',', '.') }}</td>
-                        <td>
-                            <span class="badge {{ $data->status == 'proses' ? 'bg-warning' :
+        <table class="table table-hover" id="example">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Username</th>
+                    <th>Tiket</th>
+                    <th>Wisata</th>
+                    <th>Jumlah Tiket</th>
+                    <th>Total Harga</th>
+                    <th>Status Pemesanan</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @foreach ($pemesanan as $data)
+                <tr>
+                    <td><strong>{{ $loop->iteration }}</strong></td>
+                    <td>{{ $data->user->username }}</td>
+                    <td>{{ $data->tiket->kode_tiket }}</td>
+                    <td>{{ $data->wisata->nama_wisata }}</td>
+                    <td>{{ $data->jumlah_tiket }}</td>
+                    <td>Rp {{ number_format($data->total_harga, 0, ',', '.') }}</td>
+                    <td>
+                        <span class="badge {{ $data->status == 'proses' ? 'bg-warning' :
                                               ($data->status == 'selesai' ? 'bg-success' : 'bg-danger') }}">
-                                {{ ucfirst($data->status) }}
-                            </span>
-                        </td>
-                        <td>
-                            <span
-                                class="badge {{ $data->pembayaran?->status == 'sudah_bayar' ? 'bg-success' :
-                                              ($data->pembayaran?->status == 'belum_bayar' ? 'bg-warning' :
-                                              ($data->pembayaran?->status == 'gagal' ? 'bg-danger' : 'bg-secondary')) }}">
-                                {{ $data->pembayaran ? ucfirst(str_replace('_', ' ', $data->pembayaran->status)) :
-                                'Belum Ada' }}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                    data-bs-toggle="dropdown">
-                                    <i class="bx bx-dots-vertical-rounded"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('pemesanan.edit', $data->id) }}">
-                                            <i class="bx bx-edit-alt me-1"></i> Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <form action="{{ route('pemesanan.destroy', $data->id) }}" method="POST"
-                                            class="delete-form">
-                                            @method('DELETE')
-                                            @csrf
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="bx bx-trash me-1"></i> Delete
-                                            </button>
-                                        </form>
-                                    </li>
-                                    @if(!$data->pembayaran || $data->pembayaran->status == 'belum_bayar' ||
-                                    $data->pembayaran->status == 'gagal')
-                                    <li>
-                                        <button class="dropdown-item pay-button" data-id="{{ $data->id }}">
-                                            <i class="bx bx-credit-card me-1"></i> Bayar
+                            {{ ucfirst($data->status) }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('pemesanan.edit', $data->id) }}">
+                                        <i class="bx bx-edit-alt me-1"></i> Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <form action="{{ route('pemesanan.destroy', $data->id) }}" method="POST"
+                                        class="delete-form">
+                                        @method('DELETE')
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bx bx-trash me-1"></i> Delete
                                         </button>
-                                    </li>
-                                    @endif
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                                    </form>
+                                </li>
+                                @if(!$data->pembayaran || $data->pembayaran->status == 'belum_bayar' ||
+                                $data->pembayaran->status == 'gagal')
+                                <li>
+                                    <button class="dropdown-item pay-button" data-id="{{ $data->id }}">
+                                        <i class="bx bx-credit-card me-1"></i> Bayar
+                                    </button>
+                                </li>
+                                @endif
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -204,5 +192,14 @@ function showAlert(type, message) {
         alertDiv.remove();
     }, 5000);
 }
+</script>
+
+{{-- DataTable --}}
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js"></script>
+
+<script>
+    new DataTable('#example')
 </script>
 @endpush

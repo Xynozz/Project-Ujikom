@@ -108,6 +108,7 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
     @stack('scripts')
+
 </body>
 
 </html>

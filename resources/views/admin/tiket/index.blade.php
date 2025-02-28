@@ -1,5 +1,8 @@
 @extends('layouts.admin.frontend.template')
 
+@push('css')
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css">
+@endpush
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tiket</span></h5>
@@ -10,7 +13,7 @@
             <a href="{{ route('tiket.create') }}" class="btn btn-primary">Tambah</a>
         </div>
         <div class="table-responsive text-nowrap">
-            <table class="table table-hover">
+            <table class="table table-hover" id="example">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -56,3 +59,12 @@
     </div>
 </div>
 @endsection
+@push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js"></script>
+
+<script>
+    new DataTable('#example')
+</script>
+@endpush

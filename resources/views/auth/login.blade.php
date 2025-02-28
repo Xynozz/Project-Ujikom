@@ -20,6 +20,7 @@
                     <div class="text-center text-md-center mb-4 mt-md-0">
                         <h1 class="mb-0 h3">Sign in to our platform</h1>
                     </div>
+
                     <form action="{{ route('login') }}" method="POST" class="mt-4">
                         @csrf
                         <!-- Form -->
@@ -54,7 +55,7 @@
                                         </svg>
                                     </span>
                                     <input type="password" placeholder="Password" class="form-control" id="password"
-                                        name="password" required>
+                                        name="password">
                                 </div>
                             </div>
                             <!-- End of Form -->
@@ -76,6 +77,16 @@
                         <span class="fw-normal">or login with</span>
                     </div>
                     <div class="d-flex justify-content-center my-4">
+                        <a href="#"
+                            class="btn btn-icon-only btn-pill btn-outline-gray-500 me-2" aria-label="google button"
+                            title="google button">
+                            <svg class="icon icon-xxs" aria-hidden="true" focusable="false"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                                <path fill="currentColor"
+                                    d="M488 261.8c0-17.8-1.5-35-4.4-51.8H249v98h134.5c-5.8 31-23.1 57.2-49 74.6v61h79c46.3-42.7 74.5-105.5 74.5-181.8zM249 492c66.8 0 122.8-22.1 163.7-60.2l-79-61c-22 14.8-50.1 23.5-84.7 23.5-65 0-120-43.8-139.8-102.7H28.5v64.6C69.7 426.4 153.7 492 249 492zM109.2 290.5c-10.2-30.4-10.2-63.1 0-93.5V132.4H28.5c-41.5 82.3-41.5 179.7 0 262l80.7-61.9zM249 100.5c35.7 0 67.8 12.3 93 36.5l69.5-69.5C371.8 23.3 315.8 0 249 0 153.7 0 69.7 65.6 28.5 163l80.7 61.9C129 144.3 184 100.5 249 100.5z">
+                                </path>
+                            </svg>
+                        </a>
                         <a href="#" class="btn btn-icon-only btn-pill btn-outline-gray-500 me-2"
                             aria-label="facebook button" title="facebook button">
                             <svg class="icon icon-xxs" aria-hidden="true" focusable="false" data-prefix="fab"
@@ -108,8 +119,11 @@
                     <div class="d-flex justify-content-center align-items-center mt-4">
                         <span class="fw-normal">
                             Not registered?
-                            <a href="./sign-up.html" class="fw-bold">Create account</a>
+                            <a href="{{ route('register') }}" class="fw-bold">Create account</a>
                         </span>
+                    </div>
+                    <div class="d-flex justify-content-center my-4">
+                        <div class="g-signin2" data-onsuccess="onSignIn"></div>
                     </div>
                 </div>
             </div>

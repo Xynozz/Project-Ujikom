@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('wisatas', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_wisata');
-            $table->text('deskripsi');
-            $table->string('lokasi');
-            $table->string('gambar');
-            $table->string('short_video');
-            $table->string('thumbnail');
-            $table->time('jam_operasional');
+            $table->string('nama_wisata')->unique();
+            $table->text('deskripsi')->nullable();
+            $table->string('lokasi')->nullable();
+            $table->string('gambar')->nullable();
+            $table->string('short_video')->nullable();
+            $table->string('thumbnail')->nullable();
+            $table->time('jam_buka')->nullable();
+            $table->time('jam_tutup')->nullable();
             $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
             $table->unsignedBigInteger('kategori_id');
             $table->timestamps();

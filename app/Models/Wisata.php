@@ -13,7 +13,8 @@ class Wisata extends Model
         'gambar',
         'short_video',
         'thumbnail',
-        'jam_operasional',
+        'jam_buka',
+        'jam_tutup',
         'status',
         'kategori_id',
     ];

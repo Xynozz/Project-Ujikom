@@ -14,7 +14,7 @@ class WisataController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     public function index()
     {
         $wisata = Wisata::all();
@@ -25,56 +25,47 @@ class WisataController extends Controller
 
     public function create()
     {
-        $wisata = Wisata::all();
         $kategori = Kategori::all();
 
-        return view('admin.wisata.create', compact('wisata', 'kategori'));
+        return view('admin.wisata.create', compact('kategori'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'nama_wisata' => 'required',
-            'deskripsi' => 'required',
-            'lokasi' => 'required',
-            'gambar' => 'required',
-            'short_video' => 'required',
-            'thumbnail' => 'required',
-            'jam_operasional' => 'required',
-            'status' => 'required',
-            'kategori_id' => 'required',
+            'nama_wisata' => 'required|string|max:255|unique:wisatas',
+            'deskripsi' => 'nullable|string',
+            'lokasi' => 'nullable|string|max:255',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'short_video' => 'nullable|mimes:jpeg,png,jpg,gif|max:2048',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'jam_buka' => 'nullable|date_format:H:i',
+            'jam_tutup' => 'nullable|date_format:H:i',
+            'status' => 'required|in:aktif,tidak_aktif',
+            'kategori_id' => 'required|exists:kategoris,id',
         ]);
 
-        $wisata = new Wisata();
-        $wisata->nama_wisata = $request->nama_wisata;
-        $wisata->deskripsi = $request->deskripsi;
-        $wisata->lokasi = $request->lokasi;
+        $data = $request->except(['gambar', 'short_video', 'thumbnail']);
 
+        // Upload gambar
         if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
-            $filePath = $file->store('images/gambar', 'public');
-            $wisata->gambar = $filePath;
+            $data['gambar'] = $request->file('gambar')->store('wisata/gambar', 'public');
         }
 
+        // Upload short_video
         if ($request->hasFile('short_video')) {
-            $file = $request->file('short_video');
-            $filePath = $file->store('images/short_video', 'public');
-            $wisata->short_video = $filePath;
+            $data['short_video'] = $request->file('short_video')->store('wisata/videos', 'public');
         }
 
+        // Upload thumbnail
         if ($request->hasFile('thumbnail')) {
-            $file = $request->file('thumbnail');
-            $filePath = $file->store('images/thumbnail', 'public');
-            $wisata->thumbnail = $filePath;
+            $data['thumbnail'] = $request->file('thumbnail')->store('wisata/thumbnails', 'public');
         }
 
-        $wisata->jam_operasional = $request->jam_operasional;
-        $wisata->status = $request->status;
-        $wisata->kategori_id = $request->kategori_id;
+        Wisata::create($data);
 
-        $wisata->save();
-
-        return redirect()->route('wisata.index')->with('success', 'Wisata berhasil ditambahkan!');
+        return redirect()->route('wisata.index')
+            ->with('success', 'Data wisata berhasil ditambahkan');
     }
 
     public function edit($id)
@@ -88,59 +79,49 @@ class WisataController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_wisata' => 'required',
-            'deskripsi' => 'required',
-            'lokasi' => 'required',
-            'gambar' => 'required',
-            'short_video' => 'required',
-            'thumbnail' => 'required',
-            'jam_operasional' => 'required',
-            'status' => 'required',
-            'kategori_id' => 'required',
+            'nama_wisata' => 'required|string|max:255|unique:wisatas,nama_wisata,' . $id,
+            'deskripsi' => 'nullable|string',
+            'lokasi' => 'nullable|string|max:255',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'short_video' => 'nullable|file|mimetypes:video/mp4,video/avi,video/mpeg,video/quicktime|max:20480', // 20MB max
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'jam_buka' => 'nullable|date_format:H:i',
+            'jam_tutup' => 'nullable|date_format:H:i',
+            'status' => 'required|in:aktif,tidak_aktif',
+            'kategori_id' => 'required|exists:kategoris,id',
         ]);
 
         $wisata = Wisata::findOrFail($id);
-        $wisata->nama_wisata = $request->nama_wisata;
-        $wisata->deskripsi = $request->deskripsi;
-        $wisata->lokasi = $request->lokasi;
+        $data = $request->except(['gambar', 'short_video', 'thumbnail']);
 
+        // Upload gambar
         if ($request->hasFile('gambar')) {
-            // Jika sebelumnya sudah ada gambar, hapus gambar lama
             if ($wisata->gambar && Storage::disk('public')->exists($wisata->gambar)) {
                 Storage::disk('public')->delete($wisata->gambar);
             }
-
-            $file = $request->file('gambar');
-            $filePath = $file->store('images/gambar', 'public');
-            $wisata->gambar = $filePath;
+            $data['gambar'] = $request->file('gambar')->store('wisata/gambar', 'public');
         }
+
+        // Upload short_video
         if ($request->hasFile('short_video')) {
-            // Jika sebelumnya sudah ada gambar, hapus gambar lama
             if ($wisata->short_video && Storage::disk('public')->exists($wisata->short_video)) {
                 Storage::disk('public')->delete($wisata->short_video);
             }
-
-            $file = $request->file('short_video');
-            $filePath = $file->store('images/short_video', 'public');
-            $wisata->short_video = $filePath;
+            $data['short_video'] = $request->file('short_video')->store('wisata/videos', 'public');
         }
+
+        // Upload thumbnail
         if ($request->hasFile('thumbnail')) {
-            // Jika sebelumnya sudah ada gambar, hapus gambar lama
             if ($wisata->thumbnail && Storage::disk('public')->exists($wisata->thumbnail)) {
                 Storage::disk('public')->delete($wisata->thumbnail);
             }
-
-            $file = $request->file('thumbnail');
-            $filePath = $file->store('images/thumbnail', 'public');
-            $wisata->thumbnail = $filePath;
+            $data['thumbnail'] = $request->file('thumbnail')->store('wisata/thumbnails', 'public');
         }
 
-        $wisata->jam_operasional = $request->jam_operasional;
-        $wisata->status = $request->status;
-        $wisata->kategori_id = $request->kategori_id;
-        $wisata->save();
+        $wisata->update($data);
 
-        return redirect()->route('wisata.index')->with('success', 'Wisata berhasil diupdate!');
+        return redirect()->route('wisatas.index')
+            ->with('success', 'Data wisata berhasil diupdate');
     }
 
     public function destroy($id)
@@ -161,6 +142,7 @@ class WisataController extends Controller
 
         $wisata->delete();
 
-        return redirect()->route('wisata.index')->with('success', 'Wisata berhasil dihapus!');
+        return redirect()->route('wisatas.index')
+            ->with('success', 'Data wisata berhasil dihapus');
     }
 }

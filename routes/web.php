@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\TiketController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\WisataController;
 use App\Http\Middleware\isAdmin;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,8 +28,17 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', isAdmin::class]], fu
     Route::resource('ulasan', UlasanController::class);
     Route::resource('tiket', TiketController::class);
     Route::resource('pemesanan', PemesananController::class);
-    // Route::resource('pembayaran', PembayaranController::class);
 
+    // Laporan Routes
+    Route::prefix('laporan')->group(function () {
+        Route::get('/user', [LaporanController::class, 'userReport'])->name('laporan.user');
+        Route::get('/user/export', [LaporanController::class, 'exportUserPDF'])->name('laporan.user.export');
+        Route::get('/pemesanan', [LaporanController::class, 'pemesananReport'])->name('laporan.pemesanan');
+        Route::get('/pemesanan/export', [LaporanController::class, 'exportPemesananPDF'])->name('laporan.pemesanan.export');
+        Route::get('/laporan/user/excel', [LaporanController::class, 'exportExcel'])->name('laporan.user.excel');
+        Route::get('/laporan/pemesanan/excel', [LaporanController::class, 'exportPemesananExcel'])->name('laporan.pemesanan.excel');
+        Route::get('/pendapatan', [LaporanController::class, 'pendapatanReport'])->name('laporan.pendapatan');
+    });
 });
 
 Route::group(['prefix' => 'user'], function () {
@@ -38,11 +49,6 @@ Route::group(['prefix' => 'user'], function () {
 Route::get('test', function() {
     return view('layouts.app');
 });
-
-// Route::post('/create-transaction', [PembayaranController::class, 'createTransaction']);
-// Route::post('/midtrans-notification', [PembayaranController::class, 'handleNotification']);
-// Route::post('/update-pemesanan-status/{orderId}', [PembayaranController::class, 'updatePemesananStatus']);
-// Route::post('/midtrans/webhook', [PembayaranController::class, 'handleMidtransWebhook']);
 
 Route::post('/pembayaran/{pemesananId}', [PembayaranController::class, 'createPayment'])->name('payment.notification')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 
