@@ -10,43 +10,58 @@
                     <h5 class="mb-0">Edit Ulasan</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('ulasan.update', $ulasan->id) }}" method="POST" multipart enctype="multipart/form-data">
+                    <form action="{{ route('ulasan.update', $ulasan->id) }}" method="POST" multipart
+                        enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="mb-3">
-                            <label class="form-label" for="basic-default-fullname">Wisata</label>
-                            <select class="form-select" name="wisata_id" id="wisata_id">
+                            <label class="form-label" for="wisata_id">Wisata</label>
+                            <select class="form-select @error('wisata_id') is-invalid @enderror" name="wisata_id"
+                                id="wisata_id">
                                 @foreach($wisata as $data)
-                                <option value="{{ $data->id }}" {{ $ulasan->wisata_id == $data->id ? 'selected' : '' }}>
+                                <option value="{{ $data->id }}" {{ old('wisata_id')==$data->id ? 'selected' : '' }}>
                                     {{ $data->nama_wisata }}</option>
                                 @endforeach
                             </select>
+                            @error('wisata_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label" for="basic-default-fullname">Username</label>
-                            <select class="form-select" name="user_id" id="user_id">
+                            <label class="form-label" for="user_id">Username</label>
+                            <select class="form-select @error('user_id') is-invalid @enderror" name="user_id"
+                                id="user_id">
                                 @foreach($user as $data)
-                                <option value="{{ $data->id }}" {{ $ulasan->user_id == $data->id ? 'selected' : '' }}>
-                                    {{ $data->username }}</option>
+                                <option value="{{ $data->id }}" {{ old('user_id')==$data->id ? 'selected' : '' }}>
+                                    {{ $data->nama_lengkap }}</option>
                                 @endforeach
                             </select>
+                            @error('user_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label for="basic-default-company">Ulasan</label>
-                            <textarea class="form-control" name="ulasan" id="basic-default-company" rows="3">{{ $ulasan->ulasan }}</textarea>
+                            <label class="form-label" for="ulasan">Ulasan</label>
+                            <textarea class="form-control @error('ulasan') is-invalid @enderror" name="ulasan"
+                                id="ulasan" rows="3">{{ old('ulasan', $ulasan->ulasan) }}</textarea>
+                            @error('ulasan')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="basic-default-company">Rating</label>
                             <select class="form-select" name="rating" id="">
-                                <option value="1" {{ $ulasan->rating == '1' ? 'selected' : '' }}>Bintang 1</option>
-                                <option value="2" {{ $ulasan->rating == '2' ? 'selected' : '' }}>Bintang 2</option>
-                                <option value="3" {{ $ulasan->rating == '3' ? 'selected' : '' }}>Bintang 3</option>
-                                <option value="4" {{ $ulasan->rating == '4' ? 'selected' : '' }}>Bintang 4</option>
-                                <option value="5" {{ $ulasan->rating == '5' ? 'selected' : '' }}>Bintang 5</option>
+                                <option value="1" {{ $ulasan->rating == '1' ? 'selected' : '' }}>Bintang 1 ⭐</option>
+                                <option value="2" {{ $ulasan->rating == '2' ? 'selected' : '' }}>Bintang 2 ⭐</option>
+                                <option value="3" {{ $ulasan->rating == '3' ? 'selected' : '' }}>Bintang 3 ⭐</option>
+                                <option value="4" {{ $ulasan->rating == '4' ? 'selected' : '' }}>Bintang 4 ⭐</option>
+                                <option value="5" {{ $ulasan->rating == '5' ? 'selected' : '' }}>Bintang 5 ⭐</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
                         <a href="{{ route('kategori.index') }}" class="btn btn-danger">Kembali</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
             </div>

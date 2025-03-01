@@ -15,7 +15,7 @@ class UlasanController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     public function index()
     {
         $ulasan = Ulasan::all();

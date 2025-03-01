@@ -15,61 +15,91 @@
                     <h5 class="mb-0">Edit Pemesanan</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('pemesanan.update', $pemesanan->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('pemesanan.update', $pemesanan->id) }}" method="POST"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row">
                             <div class="col-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="user_id">Username</label>
-                                    <select class="form-select" name="user_id" id="searchable-select">
+                                    <select class="form-select @error('user_id') is-invalid @enderror" name="user_id"
+                                        id="searchable-select">
                                         @foreach($user as $data)
-                                        <option value="{{ $data->id }}" {{ $pemesanan->user_id == $data->id ? 'selected' : '' }}>
+                                        <option value="{{ $data->id }}" {{ old('user_id', $pemesanan->user_id) ==
+                                            $data->id ? 'selected' : '' }}>
                                             {{ $data->username }}
                                         </option>
                                         @endforeach
                                     </select>
+                                    @error('user_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
+
                             <div class="col-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="wisata_id">Wisata</label>
-                                    <select class="form-select" name="wisata_id" id="wisata_id">
+                                    <select class="form-select @error('wisata_id') is-invalid @enderror"
+                                        name="wisata_id" id="wisata_id">
                                         @foreach($wisata as $data)
-                                        <option value="{{ $data->id }}" {{ $pemesanan->wisata_id == $data->id ? 'selected' : '' }}>
+                                        <option value="{{ $data->id }}" {{ old('wisata_id', $pemesanan->wisata_id) ==
+                                            $data->id ? 'selected' : '' }}>
                                             {{ $data->nama_wisata }}
                                         </option>
                                         @endforeach
                                     </select>
+                                    @error('wisata_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
+
                             <div class="col-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="tiket_id">Tiket</label>
-                                    <select class="form-select" name="tiket_id" id="tiket_id">
+                                    <select class="form-select @error('tiket_id') is-invalid @enderror" name="tiket_id"
+                                        id="tiket_id">
                                         @foreach($tiket as $data)
-                                        <option value="{{ $data->id }}" data-harga="{{ $data->harga_tiket }}" {{ $pemesanan->tiket->wisata->nama_wisata == $data->id ? 'selected' : '' }}>
-                                            {{ $data->wisata->nama_wisata }} --- Rp:{{ $data->harga_tiket }}
+                                        <option value="{{ $data->id }}" data-harga="{{ $data->harga_tiket }}" {{
+                                            old('tiket_id', $pemesanan->tiket_id) == $data->id ? 'selected' : '' }}>
+                                            {{ $data->wisata->nama_wisata }} --- Rp:{{ number_format($data->harga_tiket,
+                                            0, ',', '.') }}
                                         </option>
                                         @endforeach
                                     </select>
+                                    @error('tiket_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
+
                             <div class="col-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="jumlah_tiket">Jumlah Tiket</label>
-                                    <input type="number" class="form-control" id="jumlah_tiket" value="{{ $pemesanan->jumlah_tiket }}" name="jumlah_tiket" required />
+                                    <input type="number"
+                                        class="form-control @error('jumlah_tiket') is-invalid @enderror"
+                                        id="jumlah_tiket" name="jumlah_tiket"
+                                        value="{{ old('jumlah_tiket', $pemesanan->jumlah_tiket) }}" min="1" />
+                                    @error('jumlah_tiket')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
+
                             <div class="col-12">
                                 <div class="mb-3">
-                                    <label class="form-label" for="total_harga">Total Harga</label>
-                                    <strong id="total_harga">Rp:{{ number_format($pemesanan->total_harga, 0, ',', '.') }}</strong>
+                                    <label class="form-label">Total Harga</label>
+                                    <div>
+                                        <strong id="total_harga">Rp:{{ number_format($pemesanan->total_harga, 0, ',',
+                                            '.') }}</strong>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
                         <a href="{{ route('pemesanan.index') }}" class="btn btn-danger">Kembali</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
             </div>

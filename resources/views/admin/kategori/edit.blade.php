@@ -20,16 +20,14 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="basic-default-company">Deskripsi</label>
-                            <textarea class="form-control" name="deskripsi" id="" cols="30" rows="3">
-                                {{ $kategori->deskripsi }}
-                            </textarea>
+                            <textarea class="form-control" name="deskripsi" id="" cols="30" rows="3">{{ old('deskripsi', $kategori->deskripsi ?? '') }}</textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="basic-default-message">Icon</label>
                             <input type="file" class="form-control" name="icon" id="basic-default-message" value="{{ old('icon', $kategori->icon) }}" />
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
                         <a href="{{ route('kategori.index') }}" class="btn btn-danger">Kembali</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
             </div>

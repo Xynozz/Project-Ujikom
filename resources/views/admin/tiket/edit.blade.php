@@ -15,20 +15,27 @@
                         @method('PUT')
                         <div class="mb-3">
                             <label class="form-label" for="wisata_id">Wisata</label>
-                            <select class="form-select" name="wisata_id" id="wisata_id">
+                            <select class="form-select @error('wisata_id') is-invalid @enderror" name="wisata_id" id="wisata_id">
                                 @foreach($wisata as $data)
-                                <option value="{{ $data->id }}" {{ $tiket->wisata_id == $data->id ? 'selected' : '' }}>
+                                <option value="{{ $data->id }}" {{ old('wisata_id') == $data->id ? 'selected' : '' }}>
                                     {{ $data->nama_wisata }}
                                 </option>
                                 @endforeach
                             </select>
+                            @error('wisata_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="harga_tiket">Harga Tiket</label>
-                            <input type="number" class="form-control" name="harga_tiket" id="harga_tiket" value="{{ $tiket->harga_tiket }}" placeholder="Masukan Harga Tiket" required />
+                            <input type="number" class="form-control @error('harga_tiket') is-invalid @enderror" name="harga_tiket"
+                                id="harga_tiket" value="{{ old('harga_tiket', $tiket->harga_tiket) }}" placeholder="Masukan Harga Tiket" />
+                            @error('harga_tiket')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
                         <a href="{{ route('tiket.index') }}" class="btn btn-danger">Kembali</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
             </div>

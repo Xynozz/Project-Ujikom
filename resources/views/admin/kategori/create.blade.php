@@ -26,8 +26,8 @@
                             <label class="form-label" for="basic-default-message">Icon</label>
                             <input type="file" class="form-control" name="icon" id="basic-default-message" />
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
                         <a href="{{ route('kategori.index') }}" class="btn btn-danger">Kembali</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
             </div>

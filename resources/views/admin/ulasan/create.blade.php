@@ -13,42 +13,56 @@
                     <form action="{{ route('ulasan.store') }}" method="POST" multipart enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
-                            <label class="form-label" for="basic-default-fullname">Wisata</label>
-                            <select class="form-select" name="wisata_id" id="wisata_id">
+                            <label class="form-label" for="wisata_id">Wisata</label>
+                            <select class="form-select @error('wisata_id') is-invalid @enderror" name="wisata_id"
+                                id="wisata_id">
                                 <option value="" selected disabled>-- Pilih Wisata --</option>
                                 @foreach($wisata as $data)
-                                <option value="{{ $data->id }}">
+                                <option value="{{ $data->id }}" {{ old('wisata_id')==$data->id ? 'selected' : '' }}>
                                     {{ $data->nama_wisata }}</option>
                                 @endforeach
                             </select>
+                            @error('wisata_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label" for="basic-default-fullname">Username</label>
-                            <select class="form-select" name="user_id" id="user_id">
+                            <label class="form-label" for="user_id">Username</label>
+                            <select class="form-select @error('user_id') is-invalid @enderror" name="user_id"
+                                id="user_id">
                                 <option value="" selected disabled>-- Pilih Username --</option>
                                 @foreach($user as $data)
-                                <option value="{{ $data->id }}">
-                                    {{ $data->username }}</option>
+                                <option value="{{ $data->id }}" {{ old('user_id')==$data->id ? 'selected' : '' }}>
+                                    {{ $data->nama_lengkap }}</option>
                                 @endforeach
                             </select>
+                            @error('user_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label for="basic-default-company">Ulasan</label>
-                            <textarea class="form-control" name="ulasan" id="basic-default-company" rows="3"></textarea>
+                            <label class="form-label" for="ulasan">Ulasan</label>
+                            <textarea class="form-control @error('ulasan') is-invalid @enderror" name="ulasan"
+                                id="ulasan" rows="3">{{ old('ulasan') }}</textarea>
+                            @error('ulasan')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="basic-default-company">Rating</label>
                             <select class="form-select" name="rating" id="">
                                 <option value="" selected disabled>-- Pilih Rating --</option>
-                                <option value="1">Bintang 1</option>
-                                <option value="2">Bintang 2</option>
-                                <option value="3">Bintang 3</option>
-                                <option value="4">Bintang 4</option>
-                                <option value="5">Bintang 5</option>
+                                <option value="1">Bintang 1 ⭐</option>
+                                <option value="2">Bintang 2 ⭐</option>
+                                <option value="3">Bintang 3 ⭐</option>
+                                <option value="4">Bintang 4 ⭐</option>
+                                <option value="5">Bintang 5 ⭐</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
                         <a href="{{ route('kategori.index') }}" class="btn btn-danger">Kembali</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
             </div>

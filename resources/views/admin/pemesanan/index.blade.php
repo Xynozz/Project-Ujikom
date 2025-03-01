@@ -12,6 +12,8 @@
             <h5 class="mb-0">Tabel Pemesanan</h5>
             <a href="{{ route('pemesanan.create') }}" class="btn btn-primary">Tambah</a>
         </div>
+
+        <div class="table-responsive text-nowrap">
         <table class="table table-hover" id="example">
             <thead>
                 <tr>
@@ -52,11 +54,11 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <form action="{{ route('pemesanan.destroy', $data->id) }}" method="POST"
+                                    <form id="delete-form" action="{{ route('pemesanan.destroy', $data->id) }}" method="POST"
                                         class="delete-form">
                                         @method('DELETE')
                                         @csrf
-                                        <button type="submit" class="dropdown-item">
+                                        <button type="button" class="dropdown-item" onclick="confirmDelete(event)">
                                             <i class="bx bx-trash me-1"></i> Delete
                                         </button>
                                     </form>
@@ -76,6 +78,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 
@@ -194,7 +197,55 @@ function showAlert(type, message) {
 }
 </script>
 
-{{-- DataTable --}}
+{{-- Toast --}}
+<script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+    }
+    });
+
+    @if(session('success'))
+        Toast.fire({
+            icon: "success",
+            title: "{{ session('success') }}"
+        });
+    @endif
+
+    @if(session('error'))
+        Toast.fire({
+            icon: "error",
+            title: "{{ session('error') }}"
+        });
+    @endif
+</script>
+
+{{-- Confirm Delete --}}
+<script>
+    function confirmDelete() {
+        Swal.fire({
+            title: "Yakin?",
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Ya, hapus!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("delete-form").submit();
+            }
+        });
+    }
+</script>
+
+
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js"></script>

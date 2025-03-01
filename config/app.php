@@ -123,4 +123,14 @@ return [
         'store'  => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    // 'providers'       => [
+    //     // Provider lainnya
+    //     Laravel\Socialite\SocialiteServiceProvider::class,
+    // ],
+
+    // 'aliases'         => [
+    //     // Alias lainnya
+    //     'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+    // ],
+
 ];

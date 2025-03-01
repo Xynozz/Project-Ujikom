@@ -8,6 +8,7 @@ use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\TiketController;
 use App\Http\Controllers\UlasanController;
 use App\Http\Controllers\WisataController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Middleware\isAdmin;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -57,3 +58,7 @@ Route::post('payment/finish', [PembayaranController::class, 'handleFinish'])->na
 Route::post('payment/error', [PembayaranController::class, 'handleError'])->name('payment.error');
 Route::post('payment/pending', [PembayaranController::class, 'handlePending'])->name('payment.pending');
 Route::post('payment/notification', [PembayaranController::class, 'handleNotification'])->name('payment.notification');
+
+// Google OAuth Routes
+Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback']);

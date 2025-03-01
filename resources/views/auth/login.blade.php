@@ -77,7 +77,7 @@
                         <span class="fw-normal">or login with</span>
                     </div>
                     <div class="d-flex justify-content-center my-4">
-                        <a href="#"
+                        <a href="{{ route('auth.google') }}"
                             class="btn btn-icon-only btn-pill btn-outline-gray-500 me-2" aria-label="google button"
                             title="google button">
                             <svg class="icon icon-xxs" aria-hidden="true" focusable="false"

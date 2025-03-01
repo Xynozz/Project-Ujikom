@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
+use Exception;
+use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -27,38 +28,35 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
-    // public function redirectToGoogle()
-    // {
-    //     return Socialite::driver('google')->redirect();
-    // }
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
 
-    // public function handleGoogleCallback()
-    // {
-    //     try {
-    //         // Ambil data pengguna dari Google
-    //         $googleUser = Socialite::driver('google')->user();
+    public function handleGoogleCallback()
+    {
+        try {
+            $user = Socialite::driver('google')->user();
 
-    //         // Cari atau buat user baru
-    //         $user = User::updateOrCreate([
-    //             'email' => $googleUser->email, // Gunakan email sebagai kunci unik
-    //         ], [
-    //             'username'             => $googleUser->name, // Simpan nama dari Google sebagai username
-    //             'nama_lengkap'         => $googleUser->name, // Simpan nama dari Google sebagai nama_lengkap
-    //             'google_id'            => $googleUser->id,
-    //             'google_token'         => $googleUser->token,
-    //             'google_refresh_token' => $googleUser->refreshToken,
-    //         ]);
+            $findUser = User::where('google_id', $user->id)->first();
 
-    //         // Login pengguna
-    //         Auth::login($user);
+            if($findUser) {
+                Auth::login($findUser);
+                return redirect()->intended('user/home');
+            } else {
+                $newUser = User::updateOrCreate(['email' => $user->email], [
+                    'username' => $user->username,
+                    'google_id' => $user->id,
+                    'password' => bcrypt('123456dummy')
+                ]);
 
-    //         // Redirect ke halaman yang sesuai
-    //         return redirect()->intended('/home')->with('success', 'Login berhasil.');
-    //     } catch (\Exception $e) {
-    //         // Tangani error
-    //         return redirect('/login')->with('error', 'Terjadi kesalahan saat login dengan Google: ' . $e->getMessage());
-    //     }
-    // }
+                Auth::login($newUser);
+                return redirect()->intended('user/home');
+            }
+        } catch (Exception $e) {
+            return redirect('login')->with('error', 'Terjadi kesalahan saat login dengan Google');
+        }
+    }
 
     // public function logout()
     // {
