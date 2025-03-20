@@ -1,5 +1,6 @@
 <?php
 
+
 return [
 
     /*
@@ -105,6 +106,8 @@ return [
         ),
     ],
 
+
+
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver
@@ -125,7 +128,8 @@ return [
 
     // 'providers'       => [
     //     // Provider lainnya
-    //     Laravel\Socialite\SocialiteServiceProvider::class,
+    //     // Laravel\Socialite\SocialiteServiceProvider::class,
+    //     App\Providers\MidtransServiceProvider::class,
     // ],
 
     // 'aliases'         => [

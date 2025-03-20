@@ -3,6 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class Tiket extends Model
 {
@@ -17,10 +18,34 @@ class Tiket extends Model
     {
         parent::boot();
 
+        // Generate kode tiket saat tiket dibuat
         static::creating(function ($tiket) {
-            // Generate kode tiket dengan format: TIK-YYYYMMDD-ID-RANDOM
-            $tiket->kode_tiket = 'TIK-' . $tiket->wisata->nama_wisata . '-' . strtoupper(Str::random(5));
+            $tiket->kode_tiket = self::generateKodeTiket($tiket->wisata->nama_wisata);
         });
+
+        // Update kode tiket saat wisata_id berubah
+        static::updating(function ($tiket) {
+            if ($tiket->isDirty('wisata_id')) {
+                $tiket->kode_tiket = self::generateKodeTiket($tiket->wisata->nama_wisata);
+            }
+        });
+    }
+
+    // Generate kode tiket
+    protected static function generateKodeTiket($namaWisata)
+    {
+        $date = Carbon::now();
+        $year = $date->format('y');
+        $month = $date->format('m');
+
+        // Ambil 3 huruf pertama dari nama wisata dan ubah ke uppercase
+        $wisataCode = strtoupper(substr($namaWisata, 0, 3));
+
+        // Generate random number
+        $random = strtoupper(Str::random(3));
+
+        // Format: TKT-XXX-YYMM-RRR
+        return "TKT-{$wisataCode}-{$year}{$month}-{$random}";
     }
 
     public function wisata()

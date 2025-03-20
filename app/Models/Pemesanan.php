@@ -12,8 +12,9 @@ class Pemesanan extends Model
         'tanggal_pemesanan',
         'jumlah_tiket',
         'total_harga',
-        'status',
+        'status'
     ];
+
 
     public function tiket()
     {

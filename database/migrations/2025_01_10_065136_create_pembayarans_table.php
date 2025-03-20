@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('pemesanan_id')->constrained('pemesanans')->onDelete('cascade');
             $table->string('order_id');
             $table->string('metode_pembayaran');
-            $table->timestamp('tanggal_pembayaran');
-            $table->enum('status', ['belum_bayar', 'pending', 'sudah_bayar', 'gagal']);
+            $table->timestamp('tanggal_pembayaran')->nullable()->change();
+            $table->string('status')->default('belum_bayar');
             $table->timestamps();
 
         });

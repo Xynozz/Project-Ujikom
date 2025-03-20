@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Events\Logout;
 // import controller
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\MidtransController;
+use App\Http\Controllers\KategoriController;
 
 Route::get('/profile', function (Request $request) {
     return $request->user();
@@ -14,4 +16,7 @@ Route::get('/profile', function (Request $request) {
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::post('midtrans/callback', [MidtransController::class, 'paymentCallback'])->name('midtrans.callback');
+Route::post('/midtrans/create-transaction', [MidtransController::class, 'createTransaction']);
 

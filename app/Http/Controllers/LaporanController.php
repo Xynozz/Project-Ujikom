@@ -7,6 +7,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Carbon\Carbon;
 
 class LaporanController extends Controller
 {
@@ -87,26 +88,26 @@ class LaporanController extends Controller
         );
     }
 
-    // public function pendapatanReport(Request $request)
-    // {
-    //     $pendapatan = Pemesanan::select(
-    //         DB::raw('DATE(created_at) as date'),
-    //         DB::raw('COUNT(*) as total_orders'),
-    //         DB::raw('SUM(total_harga) as total_income')
-    //     )
-    //         ->when($request->date_from, function ($q) use ($request) {
-    //             return $q->whereDate('created_at', '>=', $request->date_from);
-    //         })
-    //         ->when($request->date_to, function ($q) use ($request) {
-    //             return $q->whereDate('created_at', '<=', $request->date_to);
-    //         })
-    //         ->where('status', 'success')
-    //         ->groupBy('date')
-    //         ->orderBy('date', 'desc')
-    //         ->get();
+    public function exportPDF(Request $request)
+    {
+        $query = Pemesanan::with(['user', 'tiket', 'wisata']);
 
-    //     return view('admin.laporan.pendapatan', compact('pendapatan'));
-    // }
+        // Apply date filtering if dates are provided
+        if ($request->filled(['date_from', 'date_to'])) {
+            $query->whereBetween('created_at', [
+                Carbon::parse($request->date_from)->startOfDay(),
+                Carbon::parse($request->date_to)->endOfDay()
+            ]);
+        }
+
+        $pemesanan = $query->get();
+
+        $pdf = PDF::loadView('admin.laporan.pemesanan-pdf', compact('pemesanan'));
+        $pdf->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-pemesanan.pdf');
+    }
+
     public function exportExcel()
     {
         $spreadsheet = new Spreadsheet();
@@ -187,8 +188,9 @@ class LaporanController extends Controller
 
     public function exportPemesananExcel(Request $request)
     {
+        // Initialize spreadsheet
         $spreadsheet = new Spreadsheet();
-        $sheet       = $spreadsheet->getActiveSheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
         // Set header
         $sheet->setCellValue('A1', 'LAPORAN PEMESANAN TIKET');
@@ -197,10 +199,12 @@ class LaporanController extends Controller
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
 
         // Set period if exists
-        if ($request->date_from || $request->date_to) {
-            $period = 'Periode: ' . ($request->date_from ? date('d/m/Y', strtotime($request->date_from)) : '')
-                . ($request->date_from && $request->date_to ? ' - ' : '')
-                . ($request->date_to ? date('d/m/Y', strtotime($request->date_to)) : '');
+        if ($request->filled(['date_from', 'date_to'])) {
+            $period = sprintf(
+                'Periode: %s s/d %s',
+                Carbon::parse($request->date_from)->format('d/m/Y'),
+                Carbon::parse($request->date_to)->format('d/m/Y')
+            );
             $sheet->setCellValue('A2', $period);
             $sheet->mergeCells('A2:H2');
             $sheet->getStyle('A2')->getAlignment()->setHorizontal('center');
@@ -208,43 +212,41 @@ class LaporanController extends Controller
 
         // Set column headers
         $headers = ['No', 'Tanggal', 'Kode', 'Pemesan', 'Wisata', 'Status', 'Jumlah Tiket', 'Total'];
-        $col     = 'A';
-        $row     = 4;
-        foreach ($headers as $header) {
-            $sheet->setCellValue($col . $row, $header);
-            $col++;
+        foreach (array_values($headers) as $key => $header) {
+            $sheet->setCellValue(chr(65 + $key) . '4', $header);
         }
 
         // Style header row
         $headerStyle = [
-            'font'      => ['bold' => true],
+            'font' => ['bold' => true],
             'alignment' => [
                 'horizontal' => 'center',
-                'vertical'   => 'center',
+                'vertical' => 'center',
             ],
-            'borders'   => [
+            'borders' => [
                 'allBorders' => ['borderStyle' => 'thin'],
             ],
-            'fill'      => [
-                'fillType'   => 'solid',
+            'fill' => [
+                'fillType' => 'solid',
                 'startColor' => ['rgb' => 'E9ECEF'],
             ],
         ];
         $sheet->getStyle('A4:H4')->applyFromArray($headerStyle);
 
-        // Get data
-        $pemesanan = Pemesanan::with(['user', 'wisata', 'tiket'])
-            ->when($request->date_from, function ($q) use ($request) {
-                return $q->whereDate('created_at', '>=', $request->date_from);
-            })
-            ->when($request->date_to, function ($q) use ($request) {
-                return $q->whereDate('created_at', '<=', $request->date_to);
-            })
-            ->latest()
-            ->get();
+        // Get filtered data
+        $query = Pemesanan::with(['user', 'wisata', 'tiket']);
+
+        if ($request->filled(['date_from', 'date_to'])) {
+            $query->whereBetween('created_at', [
+                Carbon::parse($request->date_from)->startOfDay(),
+                Carbon::parse($request->date_to)->endOfDay()
+            ]);
+        }
+
+        $pemesanan = $query->latest()->get();
 
         // Fill data
-        $row   = 5;
+        $row = 5;
         $total = 0;
         foreach ($pemesanan as $key => $item) {
             $sheet->setCellValue('A' . $row, $key + 1);
@@ -256,43 +258,41 @@ class LaporanController extends Controller
             $sheet->setCellValue('G' . $row, $item->jumlah_tiket);
             $sheet->setCellValue('H' . $row, $item->total_harga);
 
-            // Update column alignments
-            $sheet->getStyle('A' . $row)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('B' . $row)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('F' . $row)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('G' . $row)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('H' . $row)->getAlignment()->setHorizontal('center');
+            // Center align specific columns
+            $sheet->getStyle("A{$row}:B{$row}")->getAlignment()->setHorizontal('center');
+            $sheet->getStyle("F{$row}:H{$row}")->getAlignment()->setHorizontal('center');
+
+            // Format currency
+            $sheet->getStyle("H{$row}")->getNumberFormat()->setFormatCode('#,##0');
 
             $total += $item->total_harga;
             $row++;
         }
 
-        // Add total row with center alignment
-        $sheet->setCellValue('G' . $row, 'Total');
-        $sheet->setCellValue('H' . $row, $total);
-        $sheet->getStyle('G' . $row)->getFont()->setBold(true);
-        $sheet->getStyle('G' . $row)->getAlignment()->setHorizontal('center'); // Add center alignment
-        $sheet->getStyle('H' . $row)->getNumberFormat()->setFormatCode('#,##0');
-        $sheet->getStyle('H' . $row)->getAlignment()->setHorizontal('center'); // Add center alignment for total amount
+        // Add total row
+        $totalRow = $row;
+        $sheet->setCellValue('G' . $totalRow, 'Total');
+        $sheet->setCellValue('H' . $totalRow, $total);
+        $sheet->getStyle('G' . $totalRow)->getFont()->setBold(true);
+        $sheet->getStyle('G' . $totalRow . ':H' . $totalRow)->getAlignment()->setHorizontal('center');
+        $sheet->getStyle('H' . $totalRow)->getNumberFormat()->setFormatCode('#,##0');
 
         // Auto size columns
         foreach (range('A', 'H') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
-        // Set borders for data
-        $sheet->getStyle('A4:H' . ($row))->getBorders()->getAllBorders()->setBorderStyle('thin');
+        // Set borders for all data
+        $sheet->getStyle('A4:H' . $totalRow)->getBorders()->getAllBorders()->setBorderStyle('thin');
 
-        // Create writer
+        // Create writer and prepare response
         $writer = new Xlsx($spreadsheet);
-
-        // Prepare response
         $fileName = 'laporan-pemesanan-' . date('Y-m-d') . '.xlsx';
+
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $fileName . '"');
         header('Cache-Control: max-age=0');
 
-        // Save file to output
         $writer->save('php://output');
         exit;
     }

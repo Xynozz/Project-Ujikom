@@ -94,16 +94,13 @@
                     </div>
                     <div class="col-md-6">
                         <div class="filter-buttons">
-                            <button id="filter_date" class="btn btn-primary">
-                                <i class="bx bx-filter-alt me-1"></i> Filter
-                            </button>
                             <button id="reset_filter" class="btn btn-outline-secondary">
                                 <i class="bx bx-reset me-1"></i> Reset
                             </button>
-                            <a href="{{ route('laporan.pemesanan.export') }}" class="btn btn-success">
+                            <a href="#" id="export_pdf" class="btn btn-success">
                                 <i class="bx bx-download me-1"></i> PDF
                             </a>
-                            <a href="{{ route('laporan.pemesanan.excel') }}" class="btn btn-primary">
+                            <a href="#" id="export_excel" class="btn btn-primary">
                                 <i class="bx bx-file me-1"></i> Excel
                             </a>
                             <button class="btn btn-secondary" onclick="window.print()">
@@ -184,7 +181,10 @@
                     text: '<i class="bx bx-file me-1"></i> Excel',
                     className: 'btn btn-success btn-sm',
                     exportOptions: {
-                        columns: [0,1,2,3,4,5,6,7]
+                        columns: [0,1,2,3,4,5,6,7],
+                        rows: function (idx, data, node) {
+                            return table.row(node).visible();
+                        }
                     },
                     title: 'Laporan Pemesanan - ' + new Date().toLocaleDateString('id-ID'),
                     footer: true
@@ -194,18 +194,58 @@
                     text: '<i class="bx bx-download me-1"></i> PDF',
                     className: 'btn btn-danger btn-sm',
                     exportOptions: {
-                        columns: [0,1,2,3,4,5,6,7]
+                        columns: [0,1,2,3,4,5,6,7],
+                        rows: function (idx, data, node) {
+                            return table.row(node).visible();
+                        }
                     },
-                    title: 'Laporan Pemesanan - ' + new Date().toLocaleDateString('id-ID'),
+                    title: function() {
+                        let dateFrom = $('#date_from').val();
+                        let dateTo = $('#date_to').val();
+                        let title = 'Laporan Pemesanan';
+
+                        if(dateFrom && dateTo) {
+                            title += ' (' + dateFrom + ' s/d ' + dateTo + ')';
+                        }
+
+                        return title;
+                    },
                     footer: true,
-                    orientation: 'landscape'
+                    orientation: 'landscape',
+                    customize: function(doc) {
+                        // Styling the PDF
+                        doc.styles.tableHeader.alignment = 'center';
+                        doc.styles.tableHeader.fillColor = '#f8f9fa';
+                        doc.styles.tableBodyEven.alignment = 'center';
+                        doc.styles.tableBodyOdd.alignment = 'center';
+
+                        // Add current date to footer
+                        doc['footer']=(function(page, pages) {
+                            return {
+                                columns: [
+                                    {
+                                        alignment: 'left',
+                                        text: ['Created on: ', { text: new Date().toLocaleDateString('id-ID') }]
+                                    },
+                                    {
+                                        alignment: 'right',
+                                        text: ['page ', { text: page.toString() },  ' of ', { text: pages.toString() }]
+                                    }
+                                ],
+                                margin: [20, 0]
+                            };
+                        });
+                    }
                 },
                 {
                     extend: 'print',
                     text: '<i class="bx bx-printer me-1"></i> Print',
                     className: 'btn btn-secondary btn-sm',
                     exportOptions: {
-                        columns: [0,1,2,3,4,5,6,7]
+                        columns: [0,1,2,3,4,5,6,7],
+                        rows: function (idx, data, node) {
+                            return table.row(node).visible();
+                        }
                     },
                     title: 'Laporan Pemesanan - ' + new Date().toLocaleDateString('id-ID'),
                     footer: true
@@ -234,15 +274,23 @@
             }
         });
 
-        // Server-side date filtering
-        $('#filter_date').on('click', function() {
+        // Date filter handling
+        function applyDateFilter() {
             let dateFrom = $('#date_from').val();
             let dateTo = $('#date_to').val();
 
             if (dateFrom && dateTo) {
                 window.location.href = `{{ route('laporan.pemesanan') }}?date_from=${dateFrom}&date_to=${dateTo}`;
-            } else {
-                alert('Silakan pilih rentang tanggal terlebih dahulu');
+            }
+        }
+
+        // Add change event listeners to date inputs
+        $('#date_from, #date_to').on('change', function() {
+            let dateFrom = $('#date_from').val();
+            let dateTo = $('#date_to').val();
+
+            if (dateFrom && dateTo) {
+                applyDateFilter();
             }
         });
 
@@ -264,6 +312,34 @@
         if (table.data().count() === 0) {
             $('.dt-buttons, .dataTables_filter, .dataTables_info, .dataTables_paginate, .dataTables_length').hide();
         }
+    });
+
+    document.getElementById('export_pdf').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        let dateFrom = document.getElementById('date_from').value;
+        let dateTo = document.getElementById('date_to').value;
+        let exportUrl = '{{ route('laporan.pemesanan.export') }}';
+
+        if (dateFrom && dateTo) {
+            exportUrl += `?date_from=${dateFrom}&date_to=${dateTo}`;
+        }
+
+        window.location.href = exportUrl;
+    });
+
+    document.getElementById('export_excel').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        let dateFrom = document.getElementById('date_from').value;
+        let dateTo = document.getElementById('date_to').value;
+        let exportUrl = '{{ route('laporan.pemesanan.excel') }}';
+
+        if (dateFrom && dateTo) {
+            exportUrl += `?date_from=${dateFrom}&date_to=${dateTo}`;
+        }
+
+        window.location.href = exportUrl;
     });
 </script>
 @endpush

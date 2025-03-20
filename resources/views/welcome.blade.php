@@ -177,7 +177,7 @@
                         <div class="col-11 col-md-7">
                             <form id="search-form" class="text-center" action="index.html" method="post">
                                 <input type="text" class="form-control border-0 bg-transparent"
-                                    placeholder="Search for more than 20,000 products" />
+                                    placeholder="Cari Destinasi Wisata" />
                             </form>
                         </div>
                         <div class="col-1">
@@ -194,7 +194,7 @@
 
                     <ul class="d-flex justify-content-end list-unstyled m-0">
                         <li>
-                            <a href="{{ route('login') }}" class="rounded-circle bg-light p-2 mx-1">
+                            <a href="#" class="rounded-circle bg-light p-2 mx-1">
                                 <svg width="24" height="24" viewBox="0 0 24 24">
                                     <use xlink:href="#user"></use>
                                 </svg>
@@ -246,7 +246,7 @@
                                     <div class="swiper-slide">
                                         <div class="row banner-content p-5">
                                             <div class="content-wrapper col-md-4">
-                                                <h3 class="display-4">Fresh Smoothie & Summer Juice</h3>
+                                                <h5 class="display-4">Fresh Smoothie & Summer Juice</h5>
                                                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim
                                                     massa diam elementum.</p>
                                                 <a href="#"
@@ -266,9 +266,6 @@
                                                     class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Shop
                                                     Collection</a>
                                             </div>
-                                            <div class="img-wrapper col-md-5">
-                                                <img src="images/product-thumb-1.png" class="img-fluid">
-                                            </div>
                                         </div>
                                     </div>
 
@@ -281,9 +278,6 @@
                                                 <a href="#"
                                                     class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Shop
                                                     Collection</a>
-                                            </div>
-                                            <div class="img-wrapper col-md-5">
-                                                <img src="images/product-thumb-2.png" class="img-fluid">
                                             </div>
                                         </div>
                                     </div>
@@ -338,10 +332,10 @@
                 <div class="col-md-12">
 
                     <div class="section-header d-flex flex-wrap justify-content-between mb-5">
-                        <h2 class="section-title">Category</h2>
+                        <h2 class="section-title">Kategori</h2>
 
                         <div class="d-flex align-items-center">
-                            <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
+                            <a href="#" class="btn-link text-decoration-none">Lihat Semua →</a>
                             <div class="swiper-buttons">
                                 <button class="swiper-prev category-carousel-prev btn btn-yellow">❮</button>
                                 <button class="swiper-next category-carousel-next btn btn-yellow">❯</button>
@@ -353,16 +347,19 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-
+{{--
+                    @foreach ($kategori as $data)
                     <div class="category-carousel swiper">
                         <div class="swiper-wrapper">
                             <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="images/icon-vegetables-broccoli.png" alt="Category Thumbnail">
-                                <h3 class="category-title">Fruits & Veges</h3>
+                                <img src="{{ Storage::url($data->icon) }}" class="img-fluid" width="80"
+                                    alt="Category Thumbnail">
+                                <h3 class="category-title">{{ $data->nama_kategori }}</h3>
                             </a>
 
                         </div>
                     </div>
+                    @endforeach --}}
 
                 </div>
             </div>
@@ -377,15 +374,15 @@
 
                     <div class="bootstrap-tabs product-tabs">
                         <div class="tabs-header d-flex justify-content-between border-bottom my-5">
-                            <h3>Trending Products</h3>
+                            <h3>Wisata Trending</h3>
                             <nav>
                                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                     <a href="#" class="nav-link text-uppercase fs-6 active" id="nav-all-tab"
-                                        data-bs-toggle="tab" data-bs-target="#nav-all">All</a>
+                                        data-bs-toggle="tab" data-bs-target="#nav-all">Semua</a>
                                     <a href="#" class="nav-link text-uppercase fs-6" id="nav-fruits-tab"
-                                        data-bs-toggle="tab" data-bs-target="#nav-fruits">Fruits & Veges</a>
+                                        data-bs-toggle="tab" data-bs-target="#nav-fruits">Luar Kota</a>
                                     <a href="#" class="nav-link text-uppercase fs-6" id="nav-juices-tab"
-                                        data-bs-toggle="tab" data-bs-target="#nav-juices">Juices</a>
+                                        data-bs-toggle="tab" data-bs-target="#nav-juices">Dalam Kota</a>
                                 </div>
                             </nav>
                         </div>
@@ -396,51 +393,34 @@
                                 <div
                                     class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
 
+                                    {{-- @foreach ($wisata as $data)
                                     <div class="col">
                                         <div class="product-item">
-                                            <span class="badge bg-success position-absolute m-3">-30%</span>
-                                            <a href="#" class="btn-wishlist"><svg width="24" height="24">
+                                            <a href="#" class="btn-wishlist">
+                                                <svg width="24" height="24">
                                                     <use xlink:href="#heart"></use>
-                                                </svg></a>
-                                            <figure>
-                                                <a href="index.html" title="Product Title">
-                                                    <img src="images/thumb-bananas.png" class="tab-image">
+                                                </svg>
+                                            </a>
+                                            <figure class="image-wrapper">
+                                                <a href="index.html" title="{{ $data->nama_wisata }}">
+                                                    <img src="{{ Storage::url($data->thumbnail) }}"
+                                                        class="img-fluid rounded" alt="{{ $data->nama_wisata }}"
+                                                        style="width: 100%; height: 200px; object-fit: cover;">
                                                 </a>
                                             </figure>
-                                            <h3>Sunstar Fresh Melon Juice</h3>
-                                            <span class="qty">1 Unit</span><span class="rating"><svg width="24"
-                                                    height="24" class="text-primary">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg> 4.5</span>
-                                            <span class="price">$18.00</span>
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="input-group product-qty">
-                                                    <span class="input-group-btn">
-                                                        <button type="button"
-                                                            class="quantity-left-minus btn btn-danger btn-number"
-                                                            data-type="minus">
-                                                            <svg width="16" height="16">
-                                                                <use xlink:href="#minus"></use>
-                                                            </svg>
-                                                        </button>
-                                                    </span>
-                                                    <input type="text" id="quantity" name="quantity"
-                                                        class="form-control input-number" value="1">
-                                                    <span class="input-group-btn">
-                                                        <button type="button"
-                                                            class="quantity-right-plus btn btn-success btn-number"
-                                                            data-type="plus">
-                                                            <svg width="16" height="16">
-                                                                <use xlink:href="#plus"></use>
-                                                            </svg>
-                                                        </button>
-                                                    </span>
-                                                </div>
-                                                <a href="#" class="nav-link">Add to Cart <iconify-icon
-                                                        icon="uil:shopping-cart"></a>
+                                            <h3>{{ $data->nama_wisata }}</h3>
+                                            <div class="product-meta">
+                                                <span class="qty">{{ $data->kategori->nama_kategori }}</span>
+                                                <span class="rating">
+                                                    <svg width="24" height="24" class="text-primary">
+                                                        <use xlink:href="#star-solid"></use>
+                                                    </svg>
+                                                    4.5
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
+                                    @endforeach --}}
                                 </div>
                                 <!-- / product-grid -->
 
@@ -567,22 +547,19 @@
     <section class="py-5 my-5">
         <div class="container-fluid">
 
-            <div class="bg-warning py-5 rounded-5" style="background-image: url('images/bg-pattern-2.png') no-repeat;">
+            <div class="bg-info py-5 rounded-5" style="background-image: url('images/bg-pattern-2.png') no-repeat;">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-4">
-                            <img src="images/phone.png" alt="phone" class="image-float img-fluid">
+                            <img src="{{asset('user/image/download__2_-removebg-preview (3).png')}}" alt="phone"
+                                class="image-float img-fluid">
                         </div>
                         <div class="col-md-8">
-                            <h2 class="my-5">Shop faster with foodmart App</h2>
+                            <h2 class="my-5">Travel and Tourism</h2>
                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sagittis sed ptibus liberolectus
                                 nonet psryroin. Amet sed lorem posuere sit iaculis amet, ac urna. Adipiscing fames
                                 semper erat ac in suspendisse iaculis. Amet blandit tortor praesent ante vitae. A, enim
                                 pretiummi senectus magna. Sagittis sed ptibus liberolectus non et psryroin.</p>
-                            <div class="d-flex gap-2 flex-wrap">
-                                <img src="images/app-store.jpg" alt="app-store">
-                                <img src="images/google-play.jpg" alt="google-play">
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -598,10 +575,10 @@
 
                     <div class="section-header d-flex justify-content-between">
 
-                        <h2 class="section-title">Most popular products</h2>
+                        <h2 class="section-title">Wisata Populer</h2>
 
                         <div class="d-flex align-items-center">
-                            <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
+                            <a href="#" class="btn-link text-decoration-none">Lihat semua →</a>
                             <div class="swiper-buttons">
                                 <button class="swiper-prev products-carousel-prev btn btn-primary">❮</button>
                                 <button class="swiper-next products-carousel-next btn btn-primary">❯</button>
@@ -630,31 +607,8 @@
                                 <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24"
                                         class="text-primary">
                                         <use xlink:href="#star-solid"></use>
-                                    </svg> 4.5</span>
-                                <span class="price">$18.00</span>
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <div class="input-group product-qty">
-                                        <span class="input-group-btn">
-                                            <button type="button" class="quantity-left-minus btn btn-danger btn-number"
-                                                data-type="minus">
-                                                <svg width="16" height="16">
-                                                    <use xlink:href="#minus"></use>
-                                                </svg>
-                                            </button>
-                                        </span>
-                                        <input type="text" id="quantity" name="quantity"
-                                            class="form-control input-number" value="1">
-                                        <span class="input-group-btn">
-                                            <button type="button" class="quantity-right-plus btn btn-success btn-number"
-                                                data-type="plus">
-                                                <svg width="16" height="16">
-                                                    <use xlink:href="#plus"></use>
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </div>
-                                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
-                                </div>
+                                    </svg> 4.5
+                                </span>
                             </div>
 
                         </div>
@@ -672,7 +626,7 @@
 
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="footer-menu">
-                        <img src="images/logo.png" alt="logo">
+                        <img src="{{asset('user/image/download__2_-removebg-preview (3).png')}}" width="200" alt="logo">
                         <div class="social-links mt-5">
                             <ul class="d-flex list-unstyled gap-2">
                                 <li>
@@ -725,7 +679,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-2 col-sm-6">
+                <div class="col-md-3 col-sm-6">
                     <div class="footer-menu">
                         <h5 class="widget-title">Ultras</h5>
                         <ul class="menu-list list-unstyled">
@@ -750,7 +704,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-2 col-sm-6">
+                <div class="col-md-3 col-sm-6">
                     <div class="footer-menu">
                         <h5 class="widget-title">Customer Service</h5>
                         <ul class="menu-list list-unstyled">
@@ -775,7 +729,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-2 col-sm-6">
+                <div class="col-md-3 col-sm-6">
                     <div class="footer-menu">
                         <h5 class="widget-title">Customer Service</h5>
                         <ul class="menu-list list-unstyled">
@@ -798,17 +752,6 @@
                                 <a href="#" class="nav-link">Delivery Information</a>
                             </li>
                         </ul>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="footer-menu">
-                        <h5 class="widget-title">Subscribe Us</h5>
-                        <p>Subscribe to our newsletter to get updates about our grand offers.</p>
-                        <form class="d-flex mt-3 gap-0" role="newsletter">
-                            <input class="form-control rounded-start rounded-0 bg-light" type="email"
-                                placeholder="Email Address" aria-label="Email Address">
-                            <button class="btn btn-dark rounded-end rounded-0" type="submit">Subscribe</button>
-                        </form>
                     </div>
                 </div>
 
@@ -823,7 +766,8 @@
                 </div>
                 <div class="col-md-6 credit-link text-start text-md-end">
                     <p>Free HTML Template by <a href="https://templatesjungle.com/">TemplatesJungle</a> Distributed by
-                        <a href="https://themewagon">ThemeWagon</a></p>
+                        <a href="https://themewagon">ThemeWagon</a>
+                    </p>
                 </div>
             </div>
         </div>

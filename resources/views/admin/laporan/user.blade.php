@@ -88,12 +88,6 @@
                     </div>
                     <div class="col-md-6">
                         <div class="filter-buttons">
-                            <button id="filter_date" class="btn btn-primary">
-                                <i class="bx bx-filter-alt me-1"></i> Filter
-                            </button>
-                            <button id="reset_filter" class="btn btn-outline-secondary">
-                                <i class="bx bx-reset me-1"></i> Reset
-                            </button>
                             <a href="{{ route('laporan.user.export') }}" class="btn btn-success">
                                 <i class="bx bx-download me-1"></i> PDF
                             </a>

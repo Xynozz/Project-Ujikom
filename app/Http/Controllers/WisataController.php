@@ -34,7 +34,10 @@ class WisataController extends Controller
         $request->validate([
             'nama_wisata' => 'required|string|max:255|unique:wisatas',
             'deskripsi'   => 'nullable|string',
-            'lokasi'      => 'nullable|string|max:255',
+            'provinsi'      => 'nullable|string|max:255',
+            'kabupaten'      => 'nullable|string|max:255',
+            'kecamatan'      => 'nullable|string|max:255',
+            'kelurahan'      => 'nullable|string|max:255',
             'gambar'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'short_video' => 'nullable|mimes:mp4,mov,avi|max:51200', // 50MB max
             'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',

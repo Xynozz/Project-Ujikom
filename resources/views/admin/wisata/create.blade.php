@@ -1,4 +1,3 @@
-<!-- filepath: /C:/laragon/www/Hetra_Pemesanan_Tiket/resources/views/admin/wisata/create.blade.php -->
 @extends('layouts.admin.frontend.template')
 
 @section('content')
@@ -19,8 +18,7 @@
                                 <div class="mb-3">
                                     <label class="form-label" for="nama_wisata">Nama Wisata</label>
                                     <input type="text" class="form-control @error('nama_wisata') is-invalid @enderror"
-                                        id="nama_wisata" name="nama_wisata" value="{{ old('nama_wisata', $wisata->nama_wisata) }}"
-                                        placeholder="Masukan Nama Wisata" />
+                                        id="nama_wisata" name="nama_wisata" placeholder="Masukan Nama Wisata" />
                                     @error('nama_wisata')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -30,7 +28,7 @@
                                 <div class="mb-3">
                                     <label class="form-label" for="deskripsi">Deskripsi</label>
                                     <textarea class="form-control @error('deskripsi') is-invalid @enderror"
-                                        name="deskripsi" id="deskripsi" cols="30" rows="3">{{ old('deskripsi', $wisata->deskripsi) }}</textarea>
+                                        name="deskripsi" id="deskripsi" cols="30" rows="3"></textarea>
                                     @error('deskripsi')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -38,13 +36,31 @@
                             </div>
                             <div class="col-12">
                                 <div class="mb-3">
-                                    <label class="form-label" for="lokasi">Lokasi</label>
-                                    <input type="text" class="form-control @error('lokasi') is-invalid @enderror"
-                                        id="lokasi" name="lokasi" value="{{ old('lokasi', $wisata->lokasi) }}"
-                                        placeholder="Masukan Lokasi" />
-                                    @error('lokasi')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <label class="col-sm-2 col-form-label" for="provinsi">Lokasi Wisata</label>
+                                    <select id="provinsi" name="provinsi" class="form-control">
+                                        <option value="" selected disabled>-- Pilih Provinsi --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <select id="kabupaten" name="kabupaten" class="form-control">
+                                        <option value="" selected disabled>-- Pilih Kabupaten --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <select id="kecamatan" name="kecamatan" class="form-control">
+                                        <option value="" selected disabled>-- Pilih Kecamatan --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <select id="kelurahan" name="kelurahan" class="form-control">
+                                        <option value="" selected disabled>-- Pilih Kelurahan --</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-6">
@@ -81,7 +97,7 @@
                                 <div class="mb-3">
                                     <label class="form-label" for="jam_buka">Jam Buka</label>
                                     <input type="time" class="form-control @error('jam_buka') is-invalid @enderror"
-                                        id="jam_buka" name="jam_buka" value="{{ old('jam_buka', $wisata->jam_buka) }}" />
+                                        id="jam_buka" name="jam_buka" />
                                     @error('jam_buka')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -91,7 +107,7 @@
                                 <div class="mb-3">
                                     <label class="form-label" for="jam_tutup">Jam Tutup</label>
                                     <input type="time" class="form-control @error('jam_tutup') is-invalid @enderror"
-                                        id="jam_tutup" name="jam_tutup" value="{{ old('jam_tutup', $wisata->jam_tutup) }}" />
+                                        id="jam_tutup" name="jam_tutup" />
                                     @error('jam_tutup')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -100,13 +116,10 @@
                             <div class="col-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="status">Status</label>
-                                    <select class="form-control @error('status') is-invalid @enderror" id="status" name="status">
-                                        <option value="aktif" {{ old('status', $wisata->status) == 'aktif' ? 'selected' : '' }}>
-                                            Aktif
-                                        </option>
-                                        <option value="tidak_aktif" {{ old('status', $wisata->status) == 'tidak_aktif' ? 'selected' : '' }}>
-                                            Tidak Aktif
-                                        </option>
+                                    <select class="form-control @error('status') is-invalid @enderror" id="status"
+                                        name="status">
+                                        <option value="aktif"> Aktif </option>
+                                        <option value="tidak_aktif"> Tidak Aktif </option>
                                     </select>
                                     @error('status')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -118,11 +131,9 @@
                                     <label class="form-label" for="kategori_id">Kategori</label>
                                     <select class="form-select @error('kategori_id') is-invalid @enderror"
                                         id="kategori_id" name="kategori_id">
-                                        @foreach($kategori as $k)
-                                        <option value="{{ $k->id }}"
-                                            {{ old('kategori_id', $wisata->kategori_id) == $k->id ? 'selected' : '' }}>
-                                            {{ $k->nama_kategori }}
-                                        </option>
+                                        <option value="">Pilih Kategori</option>
+                                        @foreach ($kategori as $data)
+                                        <option value="{{ $data->id }}"> {{ $data->nama_kategori }} </option>
                                         @endforeach
                                     </select>
                                     @error('kategori_id')
@@ -142,3 +153,84 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const apiBaseUrl = 'https://www.emsifa.com/api-wilayah-indonesia/api';
+
+        const provinsiSelect = document.getElementById('provinsi');
+        const kabupatenSelect = document.getElementById('kabupaten');
+        const kecamatanSelect = document.getElementById('kecamatan');
+        const kelurahanSelect = document.getElementById('kelurahan');
+
+        // Fetch data provinsi
+        fetch(`${apiBaseUrl}/provinces.json`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(provinsi => {
+                    provinsiSelect.innerHTML +=
+                        `<option value="${provinsi.id}">${provinsi.name}</option>`;
+                });
+            })
+            .catch(error => console.error('Error fetching provinces:', error));
+
+        // Event listener untuk kabupaten ketika provinsi dipilih
+        provinsiSelect.addEventListener('change', () => {
+            const provinsiId = provinsiSelect.value;
+            kabupatenSelect.innerHTML =
+                '<option value="" selected disabled>-- Pilih Kabupaten --</option>';
+            kecamatanSelect.innerHTML =
+                '<option value="" selected disabled>-- Pilih Kecamatan --</option>';
+            kelurahanSelect.innerHTML =
+                '<option value="" selected disabled>-- Pilih Kelurahan --</option>';
+
+            fetch(`${apiBaseUrl}/regencies/${provinsiId}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(kabupaten => {
+                        kabupatenSelect.innerHTML +=
+                            `<option value="${kabupaten.id}">${kabupaten.name}</option>`;
+                    });
+                })
+                .catch(error => console.error('Error fetching regencies:', error));
+        });
+
+        // Event listener untuk kecamatan ketika kabupaten dipilih
+        kabupatenSelect.addEventListener('change', () => {
+            const kabupatenId = kabupatenSelect.value;
+            kecamatanSelect.innerHTML =
+                '<option value="" selected disabled>-- Pilih Kecamatan --</option>';
+            kelurahanSelect.innerHTML =
+                '<option value="" selected disabled>-- Pilih Kelurahan --</option>';
+
+            fetch(`${apiBaseUrl}/districts/${kabupatenId}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(kecamatan => {
+                        kecamatanSelect.innerHTML +=
+                            `<option value="${kecamatan.id}">${kecamatan.name}</option>`;
+                    });
+                })
+                .catch(error => console.error('Error fetching districts:', error));
+        });
+
+        // Event listener untuk kelurahan ketika kecamatan dipilih
+        kecamatanSelect.addEventListener('change', () => {
+            const kecamatanId = kecamatanSelect.value;
+            kelurahanSelect.innerHTML =
+                '<option value="" selected disabled>-- Pilih Kelurahan --</option>';
+
+            fetch(`${apiBaseUrl}/villages/${kecamatanId}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(kelurahan => {
+                        kelurahanSelect.innerHTML +=
+                            `<option value="${kelurahan.id}">${kelurahan.name}</option>`;
+                    });
+                })
+                .catch(error => console.error('Error fetching villages:', error));
+        });
+    });
+</script>
+@endpush

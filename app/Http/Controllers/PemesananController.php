@@ -7,6 +7,7 @@ use App\Models\Pemesanan;
 use App\Models\User;
 use App\Models\Tiket;
 use App\Models\Wisata;
+use App\Models\Pembayaran;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -20,12 +21,14 @@ class PemesananController extends Controller
 
     public function index()
     {
+        // $pembayaran = DB::table('pembayarans')->get();
+        $pembayaran = Pembayaran::all();
         $pemesanan = Pemesanan::all();
         $user = User::all();
         $tiket = Tiket::all();
         $tanggal = Carbon::now()->setTimezone('Asia/Jakarta')->format('d-m-Y');
 
-        return view('admin.pemesanan.index', compact('pemesanan', 'user', 'tiket', 'tanggal'));
+        return view('admin.pemesanan.index', compact('pembayaran', 'pemesanan', 'user', 'tiket', 'tanggal'));
     }
 
     public function updateStatus(Request $request, $id)

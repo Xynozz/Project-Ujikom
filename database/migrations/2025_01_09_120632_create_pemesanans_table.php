@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('tanggal_pemesanan');
             $table->integer('jumlah_tiket');
             $table->string('total_harga');
-            $table->enum('status', ['proses', 'selesai', 'batal'])->default('proses')->nullable();
+            $table->string('status')->default('proses')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
