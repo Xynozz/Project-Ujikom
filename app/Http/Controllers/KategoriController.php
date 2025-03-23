@@ -19,6 +19,11 @@ class KategoriController extends Controller
         $kategori = Kategori::all();
 
         return view('admin.kategori.index', compact('kategori'));
+
+        // return response()->json([
+        //     'message' => 'Data kategori berhasil diambil',
+        //     'data' => $kategori,
+        // ], 201);
     }
 
     public function create()
@@ -46,7 +51,7 @@ class KategoriController extends Controller
 
         $kategori->save();
 
-        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil disimpan!');;
+        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil disimpan!');
     }
 
     public function edit($id)

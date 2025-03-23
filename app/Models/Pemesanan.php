@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Pemesanan extends Model
 {
@@ -12,7 +13,7 @@ class Pemesanan extends Model
         'tanggal_pemesanan',
         'jumlah_tiket',
         'total_harga',
-        'status'
+        'status',
     ];
 
 
