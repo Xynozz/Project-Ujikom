@@ -19,11 +19,17 @@ class KategoriController extends Controller
         $kategori = Kategori::all();
 
         return view('admin.kategori.index', compact('kategori'));
+    }
 
-        // return response()->json([
-        //     'message' => 'Data kategori berhasil diambil',
-        //     'data' => $kategori,
-        // ], 201);
+    public function index2()
+    {
+        $kategori = Kategori::all();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar kategori berhasil diambil.',
+            'data' => $kategori
+        ], 200);
     }
 
     public function create()

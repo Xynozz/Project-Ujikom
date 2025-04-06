@@ -39,16 +39,18 @@
                         <span>Promo</span>
                     </a>
                 </li>
+                @guest
                 <div class="nav-auth">
-                    <a href="#login" class="nav-link-auth">
+                    <a href="{{ route('login') }}" class="nav-link-auth">
                         <i class='bx bx-log-in-circle'></i>
                         <span>Masuk</span>
                     </a>
-                    <a href="#register" class="btn btn-register">
+                    <a href="{{ route('register') }}" class="btn btn-register">
                         <i class='bx bx-user-plus'></i>
                         <span>Daftar</span>
                     </a>
                 </div>
+                @endguest
             </ul>
         </div>
     </div>

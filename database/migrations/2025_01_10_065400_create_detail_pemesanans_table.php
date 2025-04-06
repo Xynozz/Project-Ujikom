@@ -13,20 +13,15 @@ return new class extends Migration
     {
         Schema::create('detail_pemesanans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('pemesanan_id');
-            $table->unsignedBigInteger('pembayaran_id');
-            $table->unsignedBigInteger('tiket_id');
-            $table->unsignedBigInteger('wisata_id');
-            $table->string('kode_tiket');
-            $table->date('tanggal_berlaku');
-            $table->string('notifikasi');
-            $table->enum('status', ['proses', 'selesai', 'batal'])->default('proses');
+            $table->foreignId('pemesanan_id')->constrained('pemesanans')->onDelete('cascade');
+            $table->foreignId('pembayaran_id')->constrained('pembayarans')->onDelete('cascade');
+            $table->foreignId('wisata_id')->constrained('wisatas')->onDelete('cascade');
+            $table->foreignId('tiket_id')->constrained('tikets')->onDelete('cascade');
+            $table->dateTime('expired_at')->nullable();
+            $table->string('barcode')->nullable();
+            $table->enum('status', ['Expired', 'Unexpired'])->default('Unexpired');
             $table->timestamps();
 
-            $table->foreign('pemesanan_id')->references('id')->on('pemesanans')->onDelete('cascade');
-            $table->foreign('pembayaran_id')->references('id')->on('pembayarans')->onDelete('cascade');
-            $table->foreign('tiket_id')->references('id')->on('tikets')->onDelete('cascade');
-            $table->foreign('wisata_id')->references('id')->on('wisatas')->onDelete('cascade');
         });
     }
 

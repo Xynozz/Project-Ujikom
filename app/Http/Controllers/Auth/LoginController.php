@@ -18,7 +18,7 @@ class LoginController extends Controller
         if (Auth::user()->is_admin === 1) {
             return 'admin/dashboard';
         } else {
-            return 'user/home';
+            return '/';
         }
     }
 
@@ -42,7 +42,7 @@ class LoginController extends Controller
 
             if($findUser) {
                 Auth::login($findUser);
-                return redirect()->intended('user/home');
+                return redirect()->intended('/');
             } else {
                 $newUser = User::updateOrCreate(['email' => $user->email], [
                     'username' => $user->username,
@@ -51,7 +51,7 @@ class LoginController extends Controller
                 ]);
 
                 Auth::login($newUser);
-                return redirect()->intended('user/home');
+                return redirect()->intended('/');
             }
         } catch (Exception $e) {
             return redirect('login')->with('error', 'Terjadi kesalahan saat login dengan Google');

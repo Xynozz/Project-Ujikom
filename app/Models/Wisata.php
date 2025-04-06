@@ -22,6 +22,23 @@ class Wisata extends Model
         'kategori_id',
     ];
 
+    protected $appends = ['thumbnail_url', 'gambar_url', 'short_video_url'];
+
+    public function getThumbnailUrlAttribute()
+    {
+        return url('storage/' . $this->thumbnail);
+    }
+
+    public function getGambarUrlAttribute()
+    {
+        return url('storage/' . $this->gambar);
+    }
+
+    public function getShortVideoUrlAttribute()
+    {
+        return url('storage/' . $this->short_video);
+    }
+
     public function kategori()
     {
         return $this->belongsTo(Kategori::class);

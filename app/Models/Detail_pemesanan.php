@@ -10,10 +10,9 @@ class Detail_pemesanan extends Model
         'pemesanan_id',
         'tiket_id',
         'wisata_id',
-        'kode_tiket',
         'pembayaran_id',
-        'tanggal_berlaku',
-        'notifikasi',
+        'expired_at',
+        'barcode',
         'status',
     ];
 

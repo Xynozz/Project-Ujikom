@@ -7,6 +7,7 @@ use Illuminate\Auth\Events\Logout;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\TiketController;
 use App\Http\Controllers\WisataController;
 
@@ -20,8 +21,10 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 // Kategori
-Route::get('kategori', [KategoriController::class, 'index'])->middleware('auth:sanctum');
-Route::post('tiket', [TiketController::class, 'store'])->middleware('auth:sanctum');
+Route::get('kategori', [KategoriController::class, 'index2'])->middleware('auth:sanctum');
+
+
+Route::get('home', [UserController::class, 'index2'])->middleware('auth:sanctum');
 
 // Route::group(['middleware' => 'auth:sanctum'], function () {
 //     Route::get('kategori', [KategoriController::class, 'index']);

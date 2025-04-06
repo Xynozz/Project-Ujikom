@@ -42,12 +42,12 @@ class TiketController extends Controller
         $tiket->harga_tiket = $request->harga_tiket;
         $tiket->save();
 
-        // return redirect()->route('tiket.index')->with('success', 'Tiket berhasil ditambahkan');
+        return redirect()->route('tiket.index')->with('success', 'Tiket berhasil ditambahkan');
 
-        return response()->json([
-            'message' => 'Data wisata berhasil ditambahkan',
-            'data' => $tiket,
-        ], 201);
+        // return response()->json([
+        //     'message' => 'Data wisata berhasil ditambahkan',
+        //     'data' => $tiket,
+        // ], 201);
     }
 
     public function edit($id)

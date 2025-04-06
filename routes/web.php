@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use Illuminate\Http\Request;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PemesananController;
@@ -10,17 +11,18 @@ use App\Http\Controllers\WisataController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Middleware\isAdmin;
+use App\Models\Detail_pemesanan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Auth::routes();
 
-
+// Route Admin
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', isAdmin::class]], function () {
 
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
@@ -47,18 +49,34 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', isAdmin::class]], fu
     });
 });
 
-Route::group(['prefix' => 'user'], function () {
 
-    Route::get('home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-});
-
-Route::get('test', function() {
-    return view('layouts.app');
-});
-
-
-
+// Route User
+Route::group(['prefix' => '/'], function () {
+    Route::get('', [App\Http\Controllers\UserController::class, 'index']);
+    Route::get('/detail-wisata/{id}', [App\Http\Controllers\UserController::class, 'detailWisata'])->name('detail_wisata');
+    });
 
 // Google OAuth Routes
 Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
+
+
+Route::post('/aktivasi-barcode', function (Request $request) {
+    $barcode = $request->barcode;
+
+    $detail = Detail_pemesanan::where('barcode', $barcode)->first();
+
+    if (!$detail) {
+        return response()->json(['barcode' => null, 'message' => 'Barcode tidak ditemukan.']);
+    }
+
+    if ($detail->barcode) {
+        return response()->json(['barcode' => false, 'message' => 'Barcode sudah pernah diaktivasi.']);
+    }
+
+    // Aktifkan barcode
+    $detail->barcode = True;
+    $detail->save();
+
+    return response()->json(['barcode' => true, 'message' => 'Barcode berhasil diaktivasi!']);
+});
