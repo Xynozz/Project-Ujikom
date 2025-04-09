@@ -10,6 +10,7 @@ use App\Http\Controllers\UlasanController;
 use App\Http\Controllers\WisataController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DetailPemesananController;
 use App\Http\Middleware\isAdmin;
 use App\Models\Detail_pemesanan;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', isAdmin::class]], fu
     Route::resource('ulasan', UlasanController::class);
     Route::resource('tiket', TiketController::class);
     Route::resource('pemesanan', PemesananController::class);
+    Route::resource('detail_pemesanan', DetailPemesananController::class);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/midtrans/create-transaction', [MidtransController::class, 'createTransaction']);
@@ -61,22 +63,6 @@ Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('a
 Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
 
 
-Route::post('/aktivasi-barcode', function (Request $request) {
-    $barcode = $request->barcode;
+// Route::post('/aktivasi-tiket', [App\Http\Controllers\DetailPemesananController::class, 'aktivasiTiket'])->name('tiket.aktivasi');
+Route::get('/qr/activate/url', [DetailPemesananController::class, 'activateQrFromUrl'])->name('qr.activate.url');
 
-    $detail = Detail_pemesanan::where('barcode', $barcode)->first();
-
-    if (!$detail) {
-        return response()->json(['barcode' => null, 'message' => 'Barcode tidak ditemukan.']);
-    }
-
-    if ($detail->barcode) {
-        return response()->json(['barcode' => false, 'message' => 'Barcode sudah pernah diaktivasi.']);
-    }
-
-    // Aktifkan barcode
-    $detail->barcode = True;
-    $detail->save();
-
-    return response()->json(['barcode' => true, 'message' => 'Barcode berhasil diaktivasi!']);
-});

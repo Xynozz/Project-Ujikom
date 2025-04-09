@@ -1,18 +1,20 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Detail_pemesanan;
-use App\Models\DetailPemesanan;
 use App\Models\Pembayaran;
 use App\Models\Pemesanan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Midtrans\Config;
 use Midtrans\Snap;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
+// Tambahkan untuk enkripsi
 
 class MidtransController extends Controller
 {
@@ -72,107 +74,91 @@ class MidtransController extends Controller
             $transactionTime   = $request->transaction_time ?? now();
 
             if (empty($orderId)) {
-                Log::error('Order ID is empty');
-                return response()->json(['status' => 'error', 'message' => 'Order ID is empty'], 200);
+                return response()->json(['status' => 'error', 'message' => 'Order ID kosong'], 200);
             }
 
-            // Ambil ID pemesanan dari order_id (format: ORDER-<timestamp>-<pemesanan_id>)
             $orderParts = explode('-', $orderId);
-            if (count($orderParts) < 3 || !is_numeric($orderParts[2])) {
-                Log::error('Invalid order ID format: ' . $orderId);
-                return response()->json(['status' => 'error', 'message' => 'Invalid order format'], 200);
+            if (count($orderParts) < 3 || ! is_numeric($orderParts[2])) {
+                return response()->json(['status' => 'error', 'message' => 'Format order ID tidak valid'], 200);
             }
 
             $pemesananId = (int) $orderParts[2];
 
             DB::beginTransaction();
-            try {
-                // Ambil data pemesanan dan kunci selama update
-                $pemesanan = Pemesanan::lockForUpdate()->find($pemesananId);
-                if (!$pemesanan) {
-                    Log::error("Pemesanan dengan ID $pemesananId tidak ditemukan!");
-                    return response()->json(['status' => 'error', 'message' => 'Pemesanan tidak ditemukan'], 404);
-                }
 
-                Log::info('Current pemesanan status: ' . $pemesanan->status);
-
-                // Tentukan status berdasarkan transaction_status
-                $statusPembayaran = match ($transactionStatus) {
-                    'capture', 'settlement' => 'sudah_bayar',
-                    'pending'               => 'pending',
-                    default                 => 'gagal',
-                };
-
-                $newStatus = match ($transactionStatus) {
-                    'capture', 'settlement' => 'selesai',
-                    'pending'               => 'proses',
-                    default                 => 'batal',
-                };
-
-                Log::info("Updating status to: $newStatus");
-
-                // Simpan status baru pada pemesanan
-                $pemesanan->status = $newStatus;
-                $pemesanan->save();
-
-                // Simpan pembayaran
-                $pembayaran = Pembayaran::updateOrCreate(
-                    ['order_id' => $orderId],
-                    [
-                        'pemesanan_id'       => $pemesananId,
-                        'status'             => $statusPembayaran,
-                        'metode_pembayaran'  => $request->payment_type ?? 'unknown',
-                        'tanggal_pembayaran' => $transactionTime,
-                        'updated_at'         => now(),
-                    ]
-                );
-
-                Log::info("Pembayaran ditemukan: ", ['pembayaran_id' => $pembayaran->id]);
-
-                // Jika pembayaran sukses, buat detail pemesanan (tiket)
-                if ($transactionStatus === 'capture' || $transactionStatus === 'settlement') {
-                    $existingDetail = Detail_pemesanan::where('pemesanan_id', $pemesananId)->first();
-
-                    do {
-                        $barcode = 'TIKET-' . $pemesananId . '-' . Str::random(6);
-                    } while (Detail_pemesanan::where('barcode', $barcode)->exists());
-
-
-                    if (!$existingDetail) {
-                        Detail_pemesanan::create([
-                            'pemesanan_id'  => $pemesananId,
-                            'pembayaran_id' => $pembayaran->id, // Pastikan pembayaran_id tidak kosong
-                            'wisata_id'     => $pemesanan->wisata_id ?? null, // Pastikan ada wisata_id
-                            'tiket_id'      => $pemesanan->tiket_id ?? null, // Pastikan ada tiket_id
-                            'barcode'       => $barcode,
-                            'expired_at'    => Carbon::now()->addDays(1),
-                            'status'        => 'Unexpired',
-                        ]);
-
-                        Log::info("Detail pemesanan berhasil dibuat untuk pemesanan ID: $pemesananId");
-                    } else {
-                        Log::warning("Detail pemesanan sudah ada untuk pemesanan ID: $pemesananId");
-                    }
-                }
-
-                DB::commit();
-
-                return response()->json([
-                    'status'            => 'success',
-                    'message'           => 'Payment callback processed successfully',
-                    'pemesanan_status'  => $pemesanan->status,
-                    'pembayaran_status' => $pembayaran->status,
-                ], 200);
-
-            } catch (\Exception $e) {
-                DB::rollBack();
-                Log::error('Transaction Error: ' . $e->getMessage());
-                return response()->json(['status' => 'error', 'message' => 'Gagal memproses pembayaran'], 500);
+            $pemesanan = Pemesanan::lockForUpdate()->find($pemesananId);
+            if (! $pemesanan) {
+                return response()->json(['status' => 'error', 'message' => 'Pemesanan tidak ditemukan'], 404);
             }
 
+            $statusPembayaran = match ($transactionStatus) {
+                'capture', 'settlement' => 'sudah_bayar',
+                'pending'               => 'pending',
+                default                 => 'gagal',
+            };
+
+            $newStatus = match ($transactionStatus) {
+                'capture', 'settlement' => 'selesai',
+                'pending'               => 'proses',
+                default                 => 'batal',
+            };
+
+            $pemesanan->status = $newStatus;
+            $pemesanan->save();
+
+            $pembayaran = Pembayaran::updateOrCreate(
+                ['order_id' => $orderId],
+                [
+                    'pemesanan_id'       => $pemesananId,
+                    'status'             => $statusPembayaran,
+                    'metode_pembayaran'  => $request->payment_type ?? 'unknown',
+                    'tanggal_pembayaran' => $transactionTime,
+                    'updated_at'         => now(),
+                ]
+            );
+
+            if ($transactionStatus === 'capture' || $transactionStatus === 'settlement') {
+                $existingDetail = Detail_pemesanan::where('pemesanan_id', $pemesananId)->first();
+
+                do {
+                    $qrCodeContent = 'TIKET-' . $pemesananId . '-' . strtoupper(Str::random(10));
+                    $qrFileName = 'qr_code_' . $pemesananId . '_' . time() . '.png';
+                    $qrPath = 'qr_codes/' . $qrFileName;
+                } while (Detail_pemesanan::where('qr_code', $qrCodeContent)->exists());
+
+                if (!$existingDetail) {
+                    QrCode::format('png')->size(300)->generate($qrCodeContent, storage_path('app/public/' . $qrPath));
+
+                    Detail_pemesanan::create([
+                        'pemesanan_id'  => $pemesananId,
+                        'pembayaran_id' => $pembayaran->id,
+                        'wisata_id'     => $pemesanan->wisata_id ?? null,
+                        'tiket_id'      => $pemesanan->tiket_id ?? null,
+                        'qr_code'       => $qrCodeContent,
+                        'qr_path'       => 'storage/' . $qrPath,
+                        'expired_at'    => Carbon::now()->addDays(1),
+                        'status'        => 'Unexpired',
+                    ]);
+
+                    Log::info("Detail pemesanan berhasil dibuat dengan QR: $qrCodeContent");
+                } else {
+                    Log::warning("Detail pemesanan sudah ada untuk pemesanan ID: $pemesananId");
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status'            => 'success',
+                'message'           => 'Callback berhasil',
+                'pemesanan_status'  => $pemesanan->status,
+                'pembayaran_status' => $pembayaran->status,
+            ]);
         } catch (\Exception $e) {
-            Log::error('Callback Error: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => 'Payment callback processing failed'], 500);
+            DB::rollBack();
+            Log::error('Transaction Error: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => 'Callback gagal'], 500);
         }
     }
+
 }

@@ -16,10 +16,13 @@ return new class extends Migration
             $table->string('nama_wisata')->unique();
             $table->text('deskripsi')->nullable();
 
-            $table->string('provinsi')->nullable();
-            $table->string('kabupaten')->nullable();
-            $table->string('kecamatan')->nullable();
-            $table->string('kelurahan')->nullable();
+            // $table->string('provinsi')->nullable();
+            // $table->string('kabupaten')->nullable();
+            // $table->string('kecamatan')->nullable();
+            // $table->string('kelurahan')->nullable();
+
+            $table->decimal('latitude', 10, 7);
+            $table->decimal('longitude', 10, 7);
 
             $table->string('gambar')->nullable();
             $table->string('short_video')->nullable();
@@ -34,7 +37,7 @@ return new class extends Migration
         });
     }
 
-    /** 
+    /**
      * Reverse the migrations.
      */
     public function down(): void

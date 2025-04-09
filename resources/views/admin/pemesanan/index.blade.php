@@ -372,7 +372,6 @@
                 <h5 class="modal-title text-white">
                     <i class='bx bx-info-circle me-2'></i>Detail Pemesanan #{{ $data->tiket->kode_tiket }}
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
                 <div class="row g-4">
@@ -466,126 +465,6 @@
                                     </tr>
                                 </table>
                                 @endif
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- E-Tiket -->
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header d-flex align-items-center">
-                                <i class='bx bx-ticket me-2'></i>
-                                <h6 class="mb-0 text-white">E-Tiket</h6>
-                            </div>
-                            <div class="card-body p-0">
-                                {{-- <div class="e-ticket-wrapper"> --}}
-                                    @if($data->pembayaran && $data->pembayaran->status == 'sudah_bayar')
-                                    <div class="barcode-section">
-                                        <div class="d-flex justify-content-between align-items-center mb-4">
-                                            <h6 class="mb-0 d-flex align-items-center">
-                                                <i class='bx bx-ticket me-2 text-primary'></i>E-Tiket Digital
-                                            </h6>
-                                            <button class="btn btn-primary btn-sm" onclick="window.print()">
-                                                <i class='bx bx-download me-1'></i>Download
-                                            </button>
-                                        </div>
-
-                                        <div class="barcode-container">
-                                            <center>
-                                                @php
-                                                    $barcodeData = $data->tiket->kode_tiket . '-' . $data->id;
-                                                    $barcodeImage = 'data:image/png;base64,' . DNS1D::getBarcodePNG($barcodeData, 'C128', 2, 100);
-                                                @endphp
-                                                <img src="{{ $barcodeImage }}" alt="Barcode" class="img-fluid" style="max-width: 450px;">
-                                                <div class="barcode-text mt-3">
-                                                    <div class="d-flex align-items-center justify-content-center gap-2">
-                                                        <input type="text" id="barcodeImageLink{{ $data->id }}"
-                                                            value="{{ $data->tiket->kode_tiket }}-{{ $data->id }}"
-                                                            class="form-control text-center"
-                                                            readonly
-                                                            style="max-width: 300px;">
-                                                        <button class="btn btn-outline-primary btn-sm"
-                                                            onclick="copyBarcodeImageLink('{{ $data->id }}')"
-                                                            id="copyImageBtn{{ $data->id }}">
-                                                            <i class='bx bx-copy'></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </center>
-                                        </div>
-
-                                        <div class="ticket-info mt-4">
-                                            <div class="ticket-info-item">
-                                                <i class='bx bx-calendar text-primary'></i>
-                                                <div class="label">Tanggal Kunjungan</div>
-                                                <div class="value">
-                                                    {{ $data->detail_pemesanan->tanggal_kunjungan ?
-                                                    \Carbon\Carbon::parse($data->detail_pemesanan->tanggal_kunjungan)->format('d
-                                                    M Y') :
-                                                    'Belum ditentukan' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="ticket-info-item">
-                                                <i class='bx bx-group text-primary'></i>
-                                                <div class="label">Jumlah Pengunjung</div>
-                                                <div class="value">{{ $data->jumlah_tiket }} Orang</div>
-                                            </div>
-
-                                            <div class="ticket-info-item">
-                                                <i class='bx bx-check-circle text-primary'></i>
-                                                <div class="label">Status Tiket</div>
-                                                <div class="value">
-                                                    @php
-                                                    $today = \Carbon\Carbon::now();
-                                                    $visitDate =
-                                                    \Carbon\Carbon::parse($data->detail_pemesanan->expired_at ??
-                                                    $data->created_at);
-                                                    $isExpired = $today->isAfter($visitDate);
-                                                    @endphp
-
-                                                    @if($data->status == 'batal')
-                                                    <span class="badge bg-danger">Dibatalkan</span>
-                                                    @elseif($isExpired)
-                                                    <span class="badge bg-secondary">Kadaluarsa</span>
-                                                    @elseif($data->status == 'selesai')
-                                                    <span class="badge bg-success">Dapat Digunakan</span>
-                                                    @else
-                                                    <span class="badge bg-primary">Aktif</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="text-center mt-4">
-                                            <div class="validity-badge {{ !$isExpired ? 'valid' : 'expired' }}">
-                                                <i class='bx {{ !$isExpired ? ' bx-check-circle' : 'bx-time-five'
-                                                    }}'></i>
-                                                <span>{{ !$isExpired ? 'Tiket masih berlaku' : 'Tiket sudah tidak
-                                                    berlaku' }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @else
-                                    <div class="text-center py-5">
-                                        <i class='bx bx-lock-alt text-secondary' style="font-size: 3.5rem;"></i>
-                                        <h6 class="mt-3 mb-2">Tiket Belum Tersedia</h6>
-                                        <p class="text-muted mb-0">E-Tiket akan tersedia setelah pembayaran selesai</p>
-
-                                        @if(!$data->pembayaran || $data->pembayaran->status == 'belum_bayar' ||
-                                        $data->pembayaran->status == 'gagal')
-                                        <button class="btn btn-primary mt-3 pay-button" data-id="{{ $data->id }}">
-                                            <i class='bx bx-credit-card me-1'></i>Bayar Sekarang
-                                        </button>
-                                        @elseif($data->pembayaran->status == 'pending')
-                                        <div class="alert alert-info d-inline-block mt-3">
-                                            <i class='bx bx-info-circle me-1'></i>Menunggu pembayaran dikonfirmasi
-                                        </div>
-                                        @endif
-                                    </div>
-                                    @endif
-                                    {{--
-                                </div> --}}
                             </div>
                         </div>
                     </div>

@@ -36,31 +36,16 @@
                             </div>
                             <div class="col-12">
                                 <div class="mb-3">
-                                    <label class="col-sm-2 col-form-label" for="provinsi">Lokasi Wisata</label>
-                                    <select id="provinsi" name="provinsi" class="form-control">
-                                        <option value="" selected disabled>-- Pilih Provinsi --</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <select id="kabupaten" name="kabupaten" class="form-control">
-                                        <option value="" selected disabled>-- Pilih Kabupaten --</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <select id="kecamatan" name="kecamatan" class="form-control">
-                                        <option value="" selected disabled>-- Pilih Kecamatan --</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <select id="kelurahan" name="kelurahan" class="form-control">
-                                        <option value="" selected disabled>-- Pilih Kelurahan --</option>
-                                    </select>
+                                    <label class="form-label" for="lokasi">Lokasi</label>
+                                    <div class="form-control" id="map"></div>
+                                    <input class="form-control" type="hidden" id="lat" name="latitude">
+                                    <input class="form-control" type="hidden" id="lng" name="longitude">
+                                    <div class="input-group mt-3">
+                                        <input type="text" id="search-location" class="form-control" placeholder="Masukkan nama lokasi">
+                                        <button class="btn btn-primary" id="search-button" type="button">
+                                            <i class="bx bx-search"></i> Cari
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-6">
@@ -155,81 +140,71 @@
 @endsection
 
 @push('scripts')
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<style>
+    #search-location {
+        border-radius: 0.375rem 0 0 0.375rem;
+    }
+
+    #search-button {
+        border-radius: 0 0.375rem 0.375rem 0;
+    }
+</style>
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const apiBaseUrl = 'https://www.emsifa.com/api-wilayah-indonesia/api';
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize the map
+        const map = L.map('map').setView([-2.5489, 118.0149], 5); // Default to Indonesia
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
 
-        const provinsiSelect = document.getElementById('provinsi');
-        const kabupatenSelect = document.getElementById('kabupaten');
-        const kecamatanSelect = document.getElementById('kecamatan');
-        const kelurahanSelect = document.getElementById('kelurahan');
+        // Add a draggable marker
+        let marker = L.marker([-2.5489, 118.0149], { draggable: true }).addTo(map);
 
-        // Fetch data provinsi
-        fetch(`${apiBaseUrl}/provinces.json`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(provinsi => {
-                    provinsiSelect.innerHTML +=
-                        `<option value="${provinsi.id}">${provinsi.name}</option>`;
+        // Update latitude and longitude fields when the marker is dragged
+        marker.on('dragend', function (e) {
+            const lat = marker.getLatLng().lat.toFixed(6);
+            const lng = marker.getLatLng().lng.toFixed(6);
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+        });
+
+        // Search for a location
+        document.getElementById('search-button').addEventListener('click', function () {
+            const query = document.getElementById('search-location').value;
+
+            if (!query) {
+                alert('Masukkan nama lokasi untuk mencari!');
+                return;
+            }
+
+            // Use OpenStreetMap's Nominatim API for geocoding
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const lat = parseFloat(data[0].lat).toFixed(6);
+                        const lng = parseFloat(data[0].lon).toFixed(6);
+
+                        // Move the map and marker to the searched location
+                        map.setView([lat, lng], 15);
+                        marker.setLatLng([lat, lng]);
+
+                        // Update latitude and longitude fields
+                        document.getElementById('lat').value = lat;
+                        document.getElementById('lng').value = lng;
+                    } else {
+                        alert('Lokasi tidak ditemukan. Coba kata kunci lain.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching location:', error);
+                    alert('Terjadi kesalahan saat mencari lokasi.');
                 });
-            })
-            .catch(error => console.error('Error fetching provinces:', error));
-
-        // Event listener untuk kabupaten ketika provinsi dipilih
-        provinsiSelect.addEventListener('change', () => {
-            const provinsiId = provinsiSelect.value;
-            kabupatenSelect.innerHTML =
-                '<option value="" selected disabled>-- Pilih Kabupaten --</option>';
-            kecamatanSelect.innerHTML =
-                '<option value="" selected disabled>-- Pilih Kecamatan --</option>';
-            kelurahanSelect.innerHTML =
-                '<option value="" selected disabled>-- Pilih Kelurahan --</option>';
-
-            fetch(`${apiBaseUrl}/regencies/${provinsiId}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(kabupaten => {
-                        kabupatenSelect.innerHTML +=
-                            `<option value="${kabupaten.id}">${kabupaten.name}</option>`;
-                    });
-                })
-                .catch(error => console.error('Error fetching regencies:', error));
-        });
-
-        // Event listener untuk kecamatan ketika kabupaten dipilih
-        kabupatenSelect.addEventListener('change', () => {
-            const kabupatenId = kabupatenSelect.value;
-            kecamatanSelect.innerHTML =
-                '<option value="" selected disabled>-- Pilih Kecamatan --</option>';
-            kelurahanSelect.innerHTML =
-                '<option value="" selected disabled>-- Pilih Kelurahan --</option>';
-
-            fetch(`${apiBaseUrl}/districts/${kabupatenId}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(kecamatan => {
-                        kecamatanSelect.innerHTML +=
-                            `<option value="${kecamatan.id}">${kecamatan.name}</option>`;
-                    });
-                })
-                .catch(error => console.error('Error fetching districts:', error));
-        });
-
-        // Event listener untuk kelurahan ketika kecamatan dipilih
-        kecamatanSelect.addEventListener('change', () => {
-            const kecamatanId = kecamatanSelect.value;
-            kelurahanSelect.innerHTML =
-                '<option value="" selected disabled>-- Pilih Kelurahan --</option>';
-
-            fetch(`${apiBaseUrl}/villages/${kecamatanId}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(kelurahan => {
-                        kelurahanSelect.innerHTML +=
-                            `<option value="${kelurahan.id}">${kelurahan.name}</option>`;
-                    });
-                })
-                .catch(error => console.error('Error fetching villages:', error));
         });
     });
 </script>

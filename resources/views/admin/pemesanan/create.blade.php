@@ -1,8 +1,11 @@
 @extends('layouts.admin.frontend.template')
 
 @push('css')
-<!-- Select2 CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<style>
+    #search-user, #search-wisata {
+        margin-bottom: 0.5rem;
+    }
+</style>
 @endpush
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -21,41 +24,26 @@
                             <div class="col-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="user_id">Username</label>
-                                    <select class="form-select @error('user_id') is-invalid @enderror"
-                                        name="user_id" id="searchable-select">
+                                    <input type="text" id="search-user" class="form-control mb-2" placeholder="Cari Username...">
+                                    <select class="form-select" name="user_id" id="user_id">
                                         <option value="" selected disabled>-- Pilih Username --</option>
                                         @foreach($user as $data)
-                                        <option value="{{ $data->id }}" {{ old('user_id') == $data->id ? 'selected' : '' }}>
-                                            {{ $data->username }}
-                                        </option>
+                                        <option value="{{ $data->id }}">{{ $data->username }}</option>
                                         @endforeach
                                     </select>
-                                    @error('user_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
                                 </div>
                             </div>
 
                             <div class="col-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="wisata_id">Wisata</label>
-                                    <select class="form-select @error('wisata_id') is-invalid @enderror"
-                                        name="wisata_id" id="wisata_id">
+                                    <input type="text" id="search-wisata" class="form-control mb-2" placeholder="Cari Wisata...">
+                                    <select class="form-select" name="wisata_id" id="wisata_id">
                                         <option value="" selected disabled>-- Pilih Wisata --</option>
                                         @foreach($wisata as $data)
-                                        <option value="{{ $data->id }}"
-                                            data-status="{{ $data->status }}"
-                                            {{ old('wisata_id') == $data->id ? 'selected' : '' }}>
-                                            {{ $data->nama_wisata }}
-                                            @if($data->status !== 'aktif')
-                                            (Tidak Aktif)
-                                            @endif
-                                        </option>
+                                        <option value="{{ $data->id }}">{{ $data->nama_wisata }}</option>
                                         @endforeach
                                     </select>
-                                    @error('wisata_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
                                 </div>
                             </div>
 
@@ -115,17 +103,6 @@
 @endsection
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-
-{{-- Select Searchable --}}
-<script>
-    $(document).ready(function() {
-      $('#searchable-select').select2({
-        placeholder: "Pilih Username...", // Placeholder untuk pencarian
-        allowClear: true // Opsi untuk menghapus pilihan
-      });
-    });
-</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -224,4 +201,26 @@
     });
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Reusable function for filtering dropdown options
+        function setupSearchFilter(inputId, selectId) {
+            const searchInput = document.getElementById(inputId);
+            const selectElement = document.getElementById(selectId);
+
+            searchInput.addEventListener('input', function () {
+                const filter = searchInput.value.toLowerCase();
+                for (let i = 0; i < selectElement.options.length; i++) {
+                    const option = selectElement.options[i];
+                    const text = option.textContent.toLowerCase();
+                    option.style.display = text.includes(filter) ? 'block' : 'none';
+                }
+            });
+        }
+
+        // Apply the search filter to the User and Wisata dropdowns
+        setupSearchFilter('search-user', 'user_id');
+        setupSearchFilter('search-wisata', 'wisata_id');
+    });
+</script>
 @endpush

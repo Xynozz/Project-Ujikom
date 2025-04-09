@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Pemesanan;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Tiket;
 use App\Models\Wisata;
+use App\Models\Pemesanan;
 use App\Models\Pembayaran;
-use Carbon\Carbon;
+use Illuminate\Http\Request;
 use App\Models\Detail_pemesanan;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Milon\Barcode\DNS1D;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 
 class PemesananController extends Controller
@@ -27,7 +27,6 @@ class PemesananController extends Controller
         // $pembayaran = DB::table('pembayarans')->get();
         $pembayaran = Pembayaran::all();
         $detail_pemesanan = Detail_pemesanan::all();
-        // $pemesanan = Pemesanan::all();
         $pemesanan = Pemesanan::with(['user', 'tiket', 'wisata', 'pembayaran', 'detail_pemesanan'])->get();
         $user = User::all();
         $tiket = Tiket::all();

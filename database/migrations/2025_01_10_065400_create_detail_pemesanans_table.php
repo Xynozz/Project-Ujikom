@@ -18,8 +18,9 @@ return new class extends Migration
             $table->foreignId('wisata_id')->constrained('wisatas')->onDelete('cascade');
             $table->foreignId('tiket_id')->constrained('tikets')->onDelete('cascade');
             $table->dateTime('expired_at')->nullable();
-            $table->string('barcode')->nullable();
-            $table->enum('status', ['Expired', 'Unexpired'])->default('Unexpired');
+            $table->string('qr_code')->nullable();
+            $table->string('qr_path')->nullable();
+            $table->enum('status', ['Expired', 'Unexpired', 'Activate'])->default('Unexpired');
             $table->timestamps();
 
         });

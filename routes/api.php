@@ -23,17 +23,13 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanct
 // Kategori
 Route::get('kategori', [KategoriController::class, 'index2'])->middleware('auth:sanctum');
 
-
+// Beranda
 Route::get('home', [UserController::class, 'index2'])->middleware('auth:sanctum');
 
-// Route::group(['middleware' => 'auth:sanctum'], function () {
-//     Route::get('kategori', [KategoriController::class, 'index']);
-//     Route::post('kategori', [KategoriController::class, 'store']);
-//     Route::get('kategori/{id}', [KategoriController::class, 'show']);
-//     Route::put('kategori/{id}', [KategoriController::class, 'update']);
-//     Route::delete('kategori/{id}', [KategoriController::class, 'destroy']);
-// });
-
+// Midtrans
 Route::post('midtrans/callback', [MidtransController::class, 'paymentCallback'])->name('midtrans.callback');
 Route::post('/midtrans/create-transaction', [MidtransController::class, 'createTransaction']);
 
+// API LOKASI
+Route::post('/wisata', [WisataController::class, 'store']);
+Route::get('/wisata-list', [WisataController::class, 'list']);

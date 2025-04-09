@@ -36,10 +36,22 @@
 
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
+    {{-- API LOKASI --}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 500px; }
+        .form-popup {
+          position: absolute;
+          background: white;
+          padding: 10px;
+          border: 1px solid #ccc;
+          top: 60px;
+          left: 20px;
+          z-index: 1000;
+          box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+      </style>
 
-    <!-- Page CSS -->
-
-    <!-- Helpers -->
     <script src="{{ asset('admin/assets/vendor/js/helpers.js') }}"></script>
 
     <script src="{{ asset('admin/assets/js/config.js') }}"></script>
@@ -119,6 +131,9 @@
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+
+    <!-- Leaflet JS -->
+   
     @stack('scripts')
 
 </body>

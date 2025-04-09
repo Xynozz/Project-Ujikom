@@ -107,6 +107,12 @@
                 <div data-i18n="Analytics">Pemesanan</div>
             </a>
         </li>
+        <li class="menu-item {{ url()->current() == route('detail_pemesanan.index') ? 'active' : '' }}">
+            <a href="{{  route('detail_pemesanan.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-detail"></i>
+                <div data-i18n="Analytics">Detail Pemesanan</div>
+            </a>
+        </li>
 
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Laporan</span>
@@ -118,7 +124,7 @@
                 <div data-i18n="User">Laporan User</div>
             </a>
         </li>
-        
+
         <li class="menu-item {{ url()->current() == route('laporan.pemesanan') ? 'active' : '' }}">
             <a href="{{ route('laporan.pemesanan') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-receipt"></i>

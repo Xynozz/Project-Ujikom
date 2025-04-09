@@ -34,10 +34,12 @@ class WisataController extends Controller
         $request->validate([
             'nama_wisata' => 'required|string|max:255|unique:wisatas',
             'deskripsi'   => 'nullable|string',
-            'provinsi'      => 'nullable|string|max:255',
-            'kabupaten'      => 'nullable|string|max:255',
-            'kecamatan'      => 'nullable|string|max:255',
-            'kelurahan'      => 'nullable|string|max:255',
+            // 'provinsi'      => 'nullable|string|max:255',
+            // 'kabupaten'      => 'nullable|string|max:255',
+            // 'kecamatan'      => 'nullable|string|max:255',
+            // 'kelurahan'      => 'nullable|string|max:255',
+            'latitude'    => 'required|numeric',
+            'longitude'   => 'required|numeric',
             'gambar'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'short_video' => 'nullable|mimes:mp4,mov,avi|max:51200', // 50MB max
             'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -69,6 +71,11 @@ class WisataController extends Controller
 
         return redirect()->route('wisata.index')
             ->with('success', 'Data wisata berhasil ditambahkan');
+    }
+
+    public function list()
+    {
+        return Wisata::all();
     }
 
     public function edit($id)

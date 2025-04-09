@@ -1,8 +1,9 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
+// Tambahkan untuk enkripsi
 
 class Detail_pemesanan extends Model
 {
@@ -12,7 +13,8 @@ class Detail_pemesanan extends Model
         'wisata_id',
         'pembayaran_id',
         'expired_at',
-        'barcode',
+        'qr_code',
+        'qr_path',
         'status',
     ];
 
@@ -20,6 +22,7 @@ class Detail_pemesanan extends Model
     {
         return $this->belongsTo(Pemesanan::class);
     }
+
 
     public function tiket()
     {
