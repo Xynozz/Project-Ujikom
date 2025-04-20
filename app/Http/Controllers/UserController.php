@@ -51,11 +51,4 @@ class UserController extends Controller
             'data' => $wisata, $tiket
         ], 200);
     }
-
-    public function detailWisata($id)
-    {
-        $wisata = Wisata::with('tiket')->findOrFail($id);
-
-        return view('user.detail_wisata', compact('wisata'));
-    }
 }

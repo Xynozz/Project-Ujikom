@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Events\Logout;
 // import controller
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\DetailWisataController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\UserController;
@@ -31,5 +32,7 @@ Route::post('midtrans/callback', [MidtransController::class, 'paymentCallback'])
 Route::post('/midtrans/create-transaction', [MidtransController::class, 'createTransaction']);
 
 // API LOKASI
-Route::post('/wisata', [WisataController::class, 'store']);
-Route::get('/wisata-list', [WisataController::class, 'list']);
+Route::get('/wisata/{id}', [WisataController::class, 'indexApi'])->middleware('auth:sanctum');
+Route::post('/wisata', [WisataController::class, 'store'])->middleware('auth:sanctum');
+Route::get('/wisata-list', [WisataController::class, 'list'])->middleware('auth:sanctum');
+Route::get('/detail-wisata/{id}', [DetailWisataController::class, 'index']);

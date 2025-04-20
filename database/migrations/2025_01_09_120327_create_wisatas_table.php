@@ -16,11 +16,6 @@ return new class extends Migration
             $table->string('nama_wisata')->unique();
             $table->text('deskripsi')->nullable();
 
-            // $table->string('provinsi')->nullable();
-            // $table->string('kabupaten')->nullable();
-            // $table->string('kecamatan')->nullable();
-            // $table->string('kelurahan')->nullable();
-
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
 

@@ -22,6 +22,12 @@ class WisataController extends Controller
         return view('admin.wisata.index', compact('wisata', 'kategori'));
     }
 
+    public function indexApi(Request $request){
+        $wisata = Wisata::findOrFail($request->id);
+        $wisata->load('kategori');
+        return response()->json($wisata);
+    }
+
     public function create()
     {
         $kategori = Kategori::all();

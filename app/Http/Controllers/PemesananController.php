@@ -35,25 +35,6 @@ class PemesananController extends Controller
         return view('admin.pemesanan.index', compact('pembayaran', 'pemesanan', 'user', 'tiket', 'tanggal', 'detail_pemesanan'));
     }
 
-    public function updateStatus(Request $request, $id)
-    {
-        // Validasi input
-        $request->validate([
-            'status' => 'required|string'
-        ]);
-
-        // Cari data berdasarkan ID
-        $pemesanan = Pemesanan::findOrFail($id);
-
-        // Update hanya field "status"
-        $pemesanan->update([
-            'status' => $request->status
-        ]);
-
-        return redirect()->route('pemesanan.index')->with('success', 'Status berhasil diubah!');
-
-    }
-
     public function create()
     {
         $pemesanan = Pemesanan::all();
@@ -70,6 +51,7 @@ class PemesananController extends Controller
             'user_id' => 'required',
             'tiket_id' => 'required',
             'wisata_id' => 'required',
+            'tanggal_pemesanan' => 'required',
             'jumlah_tiket' => 'required',
         ]);
 
@@ -86,7 +68,7 @@ class PemesananController extends Controller
         $pemesanan->user_id = $request->user_id;
         $pemesanan->tiket_id = $request->tiket_id;
         $pemesanan->wisata_id = $request->wisata_id;
-        $pemesanan->tanggal_pemesanan = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d');
+        $pemesanan->tanggal_pemesanan = $request->tanggal_pemesanan;
         $pemesanan->jumlah_tiket = $request->jumlah_tiket;
         $pemesanan->total_harga = $total_harga;
         $pemesanan->save();

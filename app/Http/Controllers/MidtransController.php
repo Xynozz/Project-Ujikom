@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Mail\PembayaranBerhasilMail;
 use App\Models\Detail_pemesanan;
 use App\Models\Pembayaran;
 use App\Models\Pemesanan;
@@ -8,11 +9,12 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Midtrans\Config;
 use Midtrans\Snap;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
 
 // Tambahkan untuk enkripsi
 
@@ -122,23 +124,28 @@ class MidtransController extends Controller
 
                 do {
                     $qrCodeContent = 'TIKET-' . $pemesananId . '-' . strtoupper(Str::random(10));
-                    $qrFileName = 'qr_code_' . $pemesananId . '_' . time() . '.png';
-                    $qrPath = 'qr_codes/' . $qrFileName;
+                    $qrFileName    = 'qr_code_' . $pemesananId . '_' . time() . '.png';
+                    $qrPath        = 'qr_codes/' . $qrFileName;
                 } while (Detail_pemesanan::where('qr_code', $qrCodeContent)->exists());
 
-                if (!$existingDetail) {
-                    QrCode::format('png')->size(300)->generate($qrCodeContent, storage_path('app/public/' . $qrPath));
+                $tanggal_pemesanan = Carbon::parse($pemesanan->tanggal_pemesanan);
 
-                    Detail_pemesanan::create([
+                if (! $existingDetail) {
+                    // Simpan QR code ke storage/app/public/qr_codes/
+                    Storage::disk('public')->put($qrPath, QrCode::format('png')->size(300)->generate($qrCodeContent));
+
+                    $detail = Detail_pemesanan::create([
                         'pemesanan_id'  => $pemesananId,
                         'pembayaran_id' => $pembayaran->id,
                         'wisata_id'     => $pemesanan->wisata_id ?? null,
                         'tiket_id'      => $pemesanan->tiket_id ?? null,
                         'qr_code'       => $qrCodeContent,
-                        'qr_path'       => 'storage/' . $qrPath,
-                        'expired_at'    => Carbon::now()->addDays(1),
+                        'qr_path'       => 'storage/' . $qrPath, // ini akan bisa diakses di public URL
+                        'expired_at'    => $tanggal_pemesanan->copy()->addDay(1),
                         'status'        => 'Unexpired',
                     ]);
+
+                    Mail::to($pemesanan->user->email)->send(new PembayaranBerhasilMail($pemesanan, $detail));
 
                     Log::info("Detail pemesanan berhasil dibuat dengan QR: $qrCodeContent");
                 } else {

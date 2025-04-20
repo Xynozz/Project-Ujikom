@@ -6,7 +6,8 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
 <style>
     .filter-buttons {
-        margin-top: 28px; /* Aligns with input fields */
+        margin-top: 28px;
+        /* Aligns with input fields */
         display: flex;
         gap: 10px;
         justify-content: flex-end;
@@ -42,28 +43,38 @@
 
     .card {
         border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
     }
 
     .card-header {
         background-color: #fff;
-        border-bottom: 1px solid rgba(0,0,0,0.125);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
         padding: 1.25rem;
     }
 
     @media print {
-        .no-print, .action-buttons, .date-range-filter,
-        .dt-buttons, .dataTables_filter, .dataTables_length,
-        .dataTables_paginate, .dataTables_info {
+
+        .no-print,
+        .action-buttons,
+        .date-range-filter,
+        .dt-buttons,
+        .dataTables_filter,
+        .dataTables_length,
+        .dataTables_paginate,
+        .dataTables_info {
             display: none !important;
         }
+
         .card {
             box-shadow: none !important;
             border: none !important;
         }
-        .table th, .table td {
+
+        .table th,
+        .table td {
             padding: 8px !important;
         }
+
         body {
             background-color: white !important;
         }
@@ -109,6 +120,7 @@
                     <thead>
                         <tr>
                             <th class="text-center" width="50">No</th>
+                            <th width="150">Avatar</th>
                             <th>Username</th>
                             <th>Email</th>
                             <th>No HP</th>
@@ -122,6 +134,10 @@
                         @foreach($users as $key => $user)
                         <tr>
                             <td class="text-center">{{ $key + 1 }}</td>
+                            <td>
+                                <img src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?username=' . urlencode($user->username) }}"
+                                    alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-gray-200" width="60">
+                            </td>
                             <td>{{ $user->username }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->no_hp ?? '-' }}</td>

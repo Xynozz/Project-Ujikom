@@ -11,7 +11,6 @@ class Ulasan extends Model
         'user_id',
         'rating',
         'ulasan',
-        'tanggal_ulasan',
     ];
 
     public function wisata()

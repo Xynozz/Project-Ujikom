@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
-use Illuminate\Http\Request;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PemesananController;
@@ -11,11 +10,13 @@ use App\Http\Controllers\WisataController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DetailPemesananController;
+use App\Http\Controllers\DetailWisataController;
 use App\Http\Middleware\isAdmin;
-use App\Models\Detail_pemesanan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
+use App\Mail\PembayaranBerhasilMail;
+use App\Models\Pemesanan;
+use Illuminate\Support\Facades\Mail;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -49,16 +50,28 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', isAdmin::class]], fu
         Route::get('/laporan/pemesanan/excel', [LaporanController::class, 'exportPemesananExcel'])->name('laporan.pemesanan.excel');
         Route::get('/pendapatan', [LaporanController::class, 'pendapatanReport'])->name('laporan.pendapatan');
     });
+
 });
+// Route::get('/test-email', function () {
+//     $pemesanan = \App\Models\Pemesanan::latest()->first();
+//     $detail = $pemesanan->detailPembayaran;
+
+//     Mail::to('letdakecap@gmail.com')->send(new PembayaranBerhasilMail($pemesanan, $detail));
+
+//     return 'Email terkirim!';
+// });
 
 
 // Route User
 Route::group(['prefix' => '/'], function () {
     Route::get('', [App\Http\Controllers\UserController::class, 'index']);
-    Route::get('/detail-wisata/{id}', [App\Http\Controllers\UserController::class, 'detailWisata'])->name('detail_wisata');
+    Route::get('/detail-wisata/{id}', [App\Http\Controllers\DetailWisataController::class, 'index'])->name('detail-wisata');
+    Route::post('/detail-wisata/{id}', [App\Http\Controllers\DetailWisataController::class, 'store'])->name('detail-wisata');
+    Route::post('/detail-wisata/{id}', [App\Http\Controllers\UlasanController::class, 'store1'])->name('detail-wisata');
     });
 
 // Google OAuth Routes
+
 Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
 

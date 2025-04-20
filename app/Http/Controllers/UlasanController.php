@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Wisata;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UlasanController extends Controller
 {
@@ -47,10 +48,29 @@ class UlasanController extends Controller
         $ulasan->wisata_id = $request->wisata_id;
         $ulasan->ulasan = $request->ulasan;
         $ulasan->rating = $request->rating;
-        $ulasan->tanggal_ulasan = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d');
         $ulasan->save();
 
         return redirect()->route('ulasan.index')->with('success', 'Ulasan berhasil ditambahkan');
+    }
+
+    public function store1(Request $request)
+    {
+
+        $request->validate([
+            'wisata_id' => 'required|exists:wisatas,id',
+            'ulasan' => 'required|string',
+            'rating' => 'required|integer|min:1|max:5', // Validasi rating antara 1 dan 5
+        ]);
+
+        // Simpan data ulasan dan rating ke database
+        Ulasan::create([
+            'wisata_id' => $request->wisata_id,
+            'user_id' => Auth::id(),
+            'rating' => $request->rating, // Pastikan ini ada
+            'ulasan' => $request->ulasan,
+        ]);
+
+        return back()->with('success', 'Ulasan berhasil dikirim!');
     }
 
     public function edit(Request $request, $id){
@@ -74,7 +94,6 @@ class UlasanController extends Controller
         $ulasan->wisata_id = $request->wisata_id;
         $ulasan->ulasan = $request->ulasan;
         $ulasan->rating = $request->rating;
-        $ulasan->tanggal_ulasan = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d');
         $ulasan->save();
 
         return redirect()->route('ulasan.index')->with('success', 'Ulasan berhasil diupdate');

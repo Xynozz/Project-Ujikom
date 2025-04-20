@@ -49,6 +49,21 @@
 
                             <div class="col-12">
                                 <div class="mb-3">
+                                    <label class="form-label" for="tanggal_pemesanan">Tanggal Pemesanan</label>
+                                    <input type="date"
+                                        class="form-control @error('tanggal_pemesanan') is-invalid @enderror"
+                                        id="tanggal_pemesanan"
+                                        name="tanggal_pemesanan"
+                                        value="{{ old('tanggal_pemesanan', date('Y-m-d')) }}"
+                                        min="{{ date('Y-m-d') }}" />
+                                    @error('tanggal_pemesanan')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="mb-3">
                                     <label class="form-label" for="tiket_id">Tiket</label>
                                     <select class="form-select @error('tiket_id') is-invalid @enderror"
                                         name="tiket_id" id="tiket_id">

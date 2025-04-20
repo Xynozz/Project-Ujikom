@@ -18,19 +18,13 @@
 @endpush
 
 @section('content')
-<!-- Carousel Section -->
-<section class="hero-carousel-section">
-    <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
-
-        <div class="carousel-inner">
-            <div class="carousel-item">
-                <div class="carousel-img-wrapper">
-                    <img src="{{ asset('user/image/image1 (2).jpg') }}" class="carousel-img" alt="Booking Tiket">
-                </div>
-            </div>
-        </div>
+<!-- Hero Section with Background -->
+<div class="hero">
+    <div class="hero-text">
+        <h1>Hallo Guys, Mau healing kemana nih?</h1>
+        <p>Rencanakan liburanmu dengan satu aplikasi pemesanan tiket.</p>
     </div>
-</section>
+</div>
 
 <!-- Banner Section -->
 <section class="banner-section">
@@ -40,17 +34,17 @@
                 <div class="banner-content">
                     <i class='bx bx-calendar-star banner-icon'></i>
                     <div class="banner-text">
-                        <h4>Flash Sale</h4>
-                        <p class="mb-0">Diskon hingga 50%</p>
+                        <h4>Tanggal Keberangkatan</h4>
+                        <p class="mb-0">Pilih tanggal keberangkatan</p>
                     </div>
                 </div>
             </div>
             <div class="banner-card">
                 <div class="banner-content">
-                    <i class='bx bx-gift banner-icon'></i>
+                    <i class='bx bx-credit-card banner-icon'></i>
                     <div class="banner-text">
-                        <h4>Promo Spesial</h4>
-                        <p class="mb-0">Dapatkan voucher gratis</p>
+                        <h4>Pembayaran Mudah</h4>
+                        <p class="mb-0">Pengalaman pembayaran lebih mudah</p>
                     </div>
                 </div>
             </div>
@@ -58,8 +52,8 @@
                 <div class="banner-content">
                     <i class='bx bx-card banner-icon'></i>
                     <div class="banner-text">
-                        <h4>Cicilan 0%</h4>
-                        <p class="mb-0">Pembayaran lebih ringan</p>
+                        <h4>Mudah diakses</h4>
+                        <p class="mb-0">Pemesanan tiket lebih mudah</p>
                     </div>
                 </div>
             </div>
@@ -145,7 +139,7 @@
                                 {{ \Carbon\Carbon::parse($destinasi->jam_tutup)->format('H:i') }}
                             </span>
                         </div>
-                        <a href="{{ route('detail_wisata', $destinasi->id) }}" class="btn-detail">Lihat Detail</a>
+                        <a href="{{ route('detail-wisata', $destinasi->id) }}" class="btn-detail">Lihat Detail</a>
                     </div>
                 </div>
             </div>
@@ -188,6 +182,49 @@
 
 <!-- Newsletter Section -->
 <section class="section-wrapper newsletter-section">
+    <footer class="footer bg-light pt-5 pb-4">
+        <div class="container">
+            <div class="row align-items-start newsletter-grid">
+                <!-- Tentang Kami -->
+                <div class="col-md-6">
+                    <h2 class="mb-3">Tentang Kami</h2>
+                    <p style="max-width: 500px; text-align: justify;">
+                        Kami adalah platform pemesanan tiket wisata yang hadir untuk memudahkan perjalanan Anda ke berbagai destinasi menarik di seluruh Indonesia. Dengan sistem pemesanan yang mudah, cepat, dan aman, kami berkomitmen untuk memberikan pengalaman terbaik bagi setiap pengguna. Didukung oleh teknologi terkini dan tim profesional yang berdedikasi, kami siap membantu Anda menjelajahi keindahan alam, budaya, dan atraksi lokal dengan penawaran terbaik dan promo eksklusif.
+                    </p>
+                </div>
+
+                <!-- Kategori Wisata & Destinasi Populer -->
+                <div class="col-md-6 benefits-grid">
+                    <div class="d-flex justify-content-between">
+                        <!-- Kategori Wisata -->
+                        <div class="me-4" style="min-width: 48%;">
+                            <h4 class="mb-3 benefit-item">Kategori Wisata</h4>
+                            <ul class="list-unstyled">
+                                @foreach ($kategori->take(5) as $item)
+                                    <li>
+                                        <a href="#" class="plain-link text-decoration-none text-dark">{{ $item->nama_kategori }}</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+                        <!-- Destinasi Populer -->
+                        <div style="min-width: 48%;">
+                            <h4 class="mb-3 benefit-item">Destinasi Populer</h4>
+                            <ul class="list-unstyled">
+                                @foreach ($wisata->where('status', 'aktif')->take(5) as $item)
+                                    <li>
+                                        <a href="{{ route('detail-wisata', $item->id) }}" class="plain-link text-decoration-none text-dark">{{ $item->nama_wisata }}</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <div class="container">
         <div class="newsletter-grid">
             <div class="newsletter-info">
@@ -210,18 +247,20 @@
                 </div>
             </div>
             <div class="newsletter-form-wrapper">
-                <form class="newsletter-form">
-                    <div class="form-group">
-                        <label for="emailInput">Email</label>
-                        <input type="email" class="form-control" id="emailInput" placeholder="Masukkan email Anda">
-                    </div>
-                    <button class="btn btn-primary w-100" type="submit">
-                        <i class='bx bx-paper-plane'></i>
-                        Berlangganan Sekarang
+                <form class="newsletter-form-horizontal">
+                    <label for="emailInput" class="form-label" style="margin-bottom: 10px;">Email</label>
+                    <input type="email" class="form-control" id="emailInput" placeholder="Masukkan email Anda">
+                    <button class="btn btn-primary" type="submit">
+                        <i class='bx bx-paper-plane'></i> Berlangganan
                     </button>
                 </form>
             </div>
         </div>
+        <hr class="my-4">
+
+            <div class="text-center">
+                <p class="mb-0">&copy; {{ date('Y') }} BookingTiket. Semua Hak Dilindungi.</p>
+            </div>
     </div>
 </section>
 @endsection

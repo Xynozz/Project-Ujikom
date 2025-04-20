@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
-use Exception;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
@@ -35,32 +34,29 @@ class LoginController extends Controller
 
     public function handleGoogleCallback()
     {
-        try {
-            $user = Socialite::driver('google')->user();
+        // Jangan pakai ->stateless() kalau ini bukan API
+        $googleUser = Socialite::driver('google')->user();
 
-            $findUser = User::where('google_id', $user->id)->first();
+        // Cek isi data dari Google
+        logger()->info('Google User Data', [
+            'id'     => $googleUser->getId(),
+            'username'   => $googleUser->getName(),
+            'email'  => $googleUser->getEmail(),
+            'avatar' => $googleUser->getAvatar(), // avatar asli
+        ]);
 
-            if($findUser) {
-                Auth::login($findUser);
-                return redirect()->intended('/');
-            } else {
-                $newUser = User::updateOrCreate(['email' => $user->email], [
-                    'username' => $user->username,
-                    'google_id' => $user->id,
-                    'password' => bcrypt('123456dummy')
-                ]);
+        // Buat atau ambil user
+        $user = User::updateOrCreate(
+            ['email' => $googleUser->getEmail()],
+            [
+                'username'     => $googleUser->getName(),
+                'avatar'   => $googleUser->getAvatar(), // simpan avatar URL
+                'password' => bcrypt(Str::random(16)),  // dummy password
+            ]
+        );
 
-                Auth::login($newUser);
-                return redirect()->intended('/');
-            }
-        } catch (Exception $e) {
-            return redirect('login')->with('error', 'Terjadi kesalahan saat login dengan Google');
-        }
+        Auth::login($user);
+
+        return redirect('/')->with('success', 'Login Berhasil');
     }
-
-    // public function logout()
-    // {
-    //     Auth::logout();
-    //     return redirect('/login');
-    // }
 }

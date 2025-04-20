@@ -2,12 +2,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Mail\TiketAktivasiMail;
 use App\Models\Detail_pemesanan;
 use App\Models\Pemesanan;
 use App\Models\Tiket;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class DetailPemesananController extends Controller
 {
@@ -45,6 +47,12 @@ class DetailPemesananController extends Controller
             'status'     => 'Activate',
             'expired_at' => Carbon::now(),
         ]);
+
+        // Kirim email ke user terkait
+        $userEmail = $detail->pemesanan->user->email ?? null;
+        if ($userEmail) {
+            Mail::to($userEmail)->send(new TiketAktivasiMail($detail));
+        }
 
         return redirect()->back()->with('qr_success', 'Tiket berhasil diaktivasi, Tiket Expired!');
     }

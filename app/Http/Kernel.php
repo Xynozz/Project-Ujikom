@@ -9,7 +9,7 @@ class Kernel extends HttpKernel
 {
     protected function schedule(Schedule $schedule)
 {
-    $schedule->command('tiket:expire')->dailyAt('00:00'); // Jalankan setiap tengah malam
+    $schedule->command('tiket:expire')->everyMinute(); // Jalankan setiap tengah malam
 }
     /**
      * The application's global HTTP middleware stack.
@@ -42,6 +42,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\Cors::class,  // Middleware CORS
         ],
 
         'api' => [

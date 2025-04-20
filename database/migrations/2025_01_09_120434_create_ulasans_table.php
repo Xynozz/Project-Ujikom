@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('wisata_id');
             $table->unsignedBigInteger('user_id');
-            $table->string('rating');
+            $table->unsignedTinyInteger('rating');
             $table->string('ulasan');
-            $table->date('tanggal_ulasan');
             $table->timestamps();
 
             $table->foreign('wisata_id')->references('id')->on('wisatas')->onDelete('cascade');

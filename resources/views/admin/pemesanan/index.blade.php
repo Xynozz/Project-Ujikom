@@ -411,7 +411,7 @@
                                     </tr>
                                     <tr>
                                         <td><i class='bx bx-calendar text-primary me-2'></i>Tanggal Pesan</td>
-                                        <td>: {{ $data->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>: {{ \Carbon\Carbon::parse($data->tanggal_pemesanan)->translatedFormat('d F Y') }}</td>
                                     </tr>
                                 </table>
                             </div>

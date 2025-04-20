@@ -510,7 +510,7 @@
                                 </h6>
                             </div>
                             <div class="card-body text-center">
-                                @if($data->qr_path)
+                                @if($data->qr_path && file_exists(public_path($data->qr_path)))
                                     <img src="{{ asset($data->qr_path) }}"
                                          alt="QR Code"
                                          class="img-fluid mb-3"
