@@ -7,9 +7,11 @@ use App\Models\Detail_pemesanan;
 use App\Models\Pemesanan;
 use App\Models\Tiket;
 use App\Models\User;
+use App\Models\Wisata;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class DetailPemesananController extends Controller
 {
@@ -56,5 +58,7 @@ class DetailPemesananController extends Controller
 
         return redirect()->back()->with('qr_success', 'Tiket berhasil diaktivasi, Tiket Expired!');
     }
+
+    
 
 }

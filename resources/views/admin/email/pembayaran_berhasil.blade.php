@@ -58,9 +58,9 @@
 
         <div class="details">
             <p><strong>ID Pemesanan:</strong> {{ $pemesanan->id }}</p>
-            <p><strong>Nama Wisata:</strong> {{ $pemesanan->tiket->nama_wisata ?? '-' }}</p>
+            <p><strong>Nama Wisata:</strong> {{ $pemesanan->wisata->nama_wisata ?? '-' }}</p>
             <p><strong>Tanggal Pemesanan:</strong> {{ $pemesanan->created_at->format('d M Y H:i') }}</p>
-            <p><strong>Total Pembayaran:</strong> Rp {{ number_format($pemesanan->total_bayar, 0, ',', '.') }}</p>
+            <p><strong>Total Pembayaran:</strong> Rp {{ number_format($pemesanan->total_harga, 0, ',', '.') }}</p>
             <p><strong>Status:</strong> {{ ucfirst($pemesanan->status) }}</p>
         </div>
 

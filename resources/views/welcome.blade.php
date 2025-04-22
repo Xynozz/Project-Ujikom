@@ -77,30 +77,32 @@
 
 
 <!-- Categories Section -->
-<section class="section-wrapper categories-section">
+<section class="categories-section">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="section-header">
             <h2>Kategori Wisata</h2>
+            <div class="scroll-controls">
+                <button class="scroll-btn prev" id="scrollLeft">
+                    <i class='bx bx-chevron-left'></i>
+                </button>
+                <button class="scroll-btn next" id="scrollRight">
+                    <i class='bx bx-chevron-right'></i>
+                </button>
+            </div>
         </div>
-        <div class="categories-grid">
-            <!-- Wisata Alam -->
-            @foreach ($kategori as $data)
-            <a href="#" class="category-card">
-                <div class="category-img">
-                    <img src="{{ Storage::url($data->icon) }}" alt="{{ $data->nama_kategori }}" alt="Kategori">
-                </div>
-                <div class="category-content">
-                    <h5 class="card-title">{{ $data->nama_kategori }}</h5>
-                </div>
-            </a>
-            @endforeach
-            <!-- Only show 6 more categories... -->
-        </div>
-        <div class="view-all-wrapper">
-            <a href="#" class="btn btn-outline-primary view-all-btn">
-                <span>Lihat Semua</span>
-                <i class='bx bx-right-arrow-alt'></i>
-            </a>
+
+        <div class="categories-scroll-container">
+            <div class="categories-wrapper">
+                @foreach ($kategori as $data)
+                <a href="#" class="category-card">
+                    <div class="category-icon">
+                        <img src="{{ Storage::url($data->icon) }}" alt="{{ $data->nama_kategori }}">
+                    </div>
+                    <h5>{{ $data->nama_kategori }}</h5>
+                    <span class="category-count">{{ $data->wisata->count() }} Wisata</span>
+                </a>
+                @endforeach
+            </div>
         </div>
     </div>
 </section>
@@ -146,7 +148,7 @@
             @endforeach
         </div>
         <div class="view-more-wrapper text-center">
-            <a href="#" class="btn-view-more">
+            <a href="{{ route('user.destinasi') }}" class="btn-view-more">
                 <span>Lihat Semua Destinasi</span>
                 <i class='bx bx-right-arrow-alt'></i>
             </a>
@@ -268,4 +270,5 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ asset('user/js/home.js') }}"></script>
+
 @endpush

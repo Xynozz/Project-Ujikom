@@ -80,9 +80,11 @@
         0% {
             transform: translateY(calc(-50% - 100px));
         }
+
         50% {
             transform: translateY(calc(-50% + 100px));
         }
+
         100% {
             transform: translateY(calc(-50% - 100px));
         }
@@ -132,7 +134,7 @@
         margin: 0;
     }
 
-    .table > :not(caption) > * > * {
+    .table> :not(caption)>*>* {
         padding: 1rem 1.25rem;
         vertical-align: middle;
     }
@@ -278,26 +280,28 @@
                             </td>
                             <td>
                                 @if($data->status == 'Activate')
-                                    <span class="badge bg-success status-badge">
-                                        <i class="bx bx-check-circle me-1"></i>Sudah Digunakan
-                                    </span>
+                                <span class="badge bg-success status-badge">
+                                    <i class="bx bx-check-circle me-1"></i>Sudah Digunakan
+                                </span>
                                 @elseif($data->status == 'Expired')
-                                    <span class="badge bg-danger status-badge">
-                                        <i class="bx bx-x-circle me-1"></i>Kadaluarsa
-                                    </span>
+                                <span class="badge bg-danger status-badge">
+                                    <i class="bx bx-x-circle me-1"></i>Kadaluarsa
+                                </span>
                                 @else
-                                    <span class="badge bg-warning status-badge">
-                                        <i class="bx bx-time me-1"></i>Belum Digunakan
-                                    </span>
+                                <span class="badge bg-warning status-badge">
+                                    <i class="bx bx-time me-1"></i>Belum Digunakan
+                                </span>
                                 @endif
                             </td>
                             <td>
                                 <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                        data-bs-toggle="dropdown">
                                         <i class="bx bx-dots-vertical-rounded"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#detailModal{{ $data->id }}">
+                                        <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                            data-bs-target="#detailModal{{ $data->id }}">
                                             <i class="bx bx-show me-1"></i> Detail
                                         </button>
                                     </div>
@@ -325,12 +329,14 @@
                 <!-- Scanner Tabs -->
                 <ul class="nav nav-tabs nav-fill" role="tablist">
                     <li class="nav-item">
-                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#cameraTab" type="button" role="tab">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#cameraTab" type="button"
+                            role="tab">
                             <i class="bx bx-camera me-2"></i>Kamera
                         </button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#uploadTab" type="button" role="tab">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#uploadTab" type="button"
+                            role="tab">
                             <i class="bx bx-upload me-2"></i>Upload
                         </button>
                     </li>
@@ -352,7 +358,8 @@
                                     <div class="scanner-line"></div>
                                 </div>
                                 <!-- Camera Switch Button -->
-                                <button id="switchCamera" class="btn btn-icon btn-secondary position-absolute top-0 end-0 m-3">
+                                <button id="switchCamera"
+                                    class="btn btn-icon btn-secondary position-absolute top-0 end-0 m-3">
                                     <i class="bx bx-refresh"></i>
                                 </button>
                             </div>
@@ -374,7 +381,8 @@
                                     <i class="bx bx-image-add display-4 text-primary mb-2"></i>
                                     <h6>Upload Gambar QR Code</h6>
                                     <p class="text-muted small mb-0">Upload gambar dalam format JPG, PNG, atau GIF</p>
-                                    <button type="button" class="btn btn-primary mt-3" onclick="document.getElementById('qrImageInput').click()">
+                                    <button type="button" class="btn btn-primary mt-3"
+                                        onclick="document.getElementById('qrImageInput').click()">
                                         <i class="bx bx-upload me-1"></i>Pilih File
                                     </button>
                                 </div>
@@ -394,10 +402,8 @@
                                     <span class="input-group-text">
                                         <i class="bx bx-link"></i>
                                     </span>
-                                    <input type="url"
-                                           class="form-control"
-                                           id="qrImageUrl"
-                                           placeholder="https://example.com/qr-code.png">
+                                    <input type="url" class="form-control" id="qrImageUrl"
+                                        placeholder="https://example.com/qr-code.png">
                                     <button class="btn btn-primary" onclick="scanQrFromUrl()">
                                         <i class="bx bx-search me-1"></i>Scan
                                     </button>
@@ -511,22 +517,17 @@
                             </div>
                             <div class="card-body text-center">
                                 @if($data->qr_path && file_exists(public_path($data->qr_path)))
-                                    <img src="{{ asset($data->qr_path) }}"
-                                         alt="QR Code"
-                                         class="img-fluid mb-3"
-                                         style="max-width: 200px;">
-                                    <div class="input-group">
-                                        <input type="text"
-                                               class="form-control"
-                                               value="{{ $data->pemesanan->tiket->kode_tiket }}"
-                                               readonly>
-                                        <button class="btn btn-primary"
-                                                onclick="copyTicketCode('{{ $data->id }}')">
-                                            <i class="bx bx-copy"></i>
-                                        </button>
-                                    </div>
+                                <img src="{{ asset($data->qr_path) }}" alt="QR Code" class="img-fluid mb-3"
+                                    style="max-width: 200px;">
+                                <div class="input-group">
+                                    <input type="text" class="form-control"
+                                        value="{{ $data->pemesanan->tiket->kode_tiket }}" readonly>
+                                    <button class="btn btn-primary" onclick="copyTicketCode('{{ $data->id }}')">
+                                        <i class="bx bx-copy"></i>
+                                    </button>
+                                </div>
                                 @else
-                                    <p class="text-muted mb-0">QR Code tidak tersedia</p>
+                                <p class="text-muted mb-0">QR Code tidak tersedia</p>
                                 @endif
                             </div>
                         </div>
@@ -550,7 +551,7 @@
 {{-- <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script> --}}
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script>
-// Initialize DataTable
+    // Initialize DataTable
 $(document).ready(function() {
     const table = $('#detailPemesananTable').DataTable({
         responsive: true,

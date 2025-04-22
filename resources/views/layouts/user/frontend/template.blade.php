@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="{{ asset('user/css/home.css') }}">
     <!-- Page CSS -->
     @stack('css')
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <!-- Navbar -->

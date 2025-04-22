@@ -17,8 +17,7 @@
 
     <div class="main-menu">
         <a href="{{ url('/') }}">Beranda</a>
-        <a href="#">Kategori</a>
-        <a href="#">Destinasi</a>
+        <a href="{{ route('user.destinasi') }}">Destinasi</a>
         <a href="#">Event</a>
         <div class="dropdown">
             <a href="#">Lainnya ▼</a>

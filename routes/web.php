@@ -1,26 +1,18 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DetailPemesananController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\MidtransController;
+use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\TiketController;
 use App\Http\Controllers\UlasanController;
 use App\Http\Controllers\WisataController;
-use App\Http\Controllers\MidtransController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\DetailPemesananController;
-use App\Http\Controllers\DetailWisataController;
 use App\Http\Middleware\isAdmin;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Mail\PembayaranBerhasilMail;
-use App\Models\Pemesanan;
-use Illuminate\Support\Facades\Mail;
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
 
 Auth::routes();
 
@@ -52,30 +44,36 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', isAdmin::class]], fu
     });
 
 });
-// Route::get('/test-email', function () {
-//     $pemesanan = \App\Models\Pemesanan::latest()->first();
-//     $detail = $pemesanan->detailPembayaran;
-
-//     Mail::to('letdakecap@gmail.com')->send(new PembayaranBerhasilMail($pemesanan, $detail));
-
-//     return 'Email terkirim!';
-// });
-
 
 // Route User
 Route::group(['prefix' => '/'], function () {
     Route::get('', [App\Http\Controllers\UserController::class, 'index']);
+
+    // Detail Wisata
     Route::get('/detail-wisata/{id}', [App\Http\Controllers\DetailWisataController::class, 'index'])->name('detail-wisata');
-    Route::post('/detail-wisata/{id}', [App\Http\Controllers\DetailWisataController::class, 'store'])->name('detail-wisata');
     Route::post('/detail-wisata/{id}', [App\Http\Controllers\UlasanController::class, 'store1'])->name('detail-wisata');
+
+    // Destinasi
+    Route::get('/destinasi', [App\Http\Controllers\DestinasiController::class, 'index'])->name('user.destinasi');
+
+    // Pemesanan User
+    Route::post('/detail-wisata/{id}', [PemesananController::class, 'storeUser'])->name('pemesanan.storeUser');
+
+    // Pembayaran
+    Route::get('/detail-pembayaran/{id}', [PembayaranController::class, 'index'])->name('user.detail_pembayaran');
+
+    // Midtrans Routes
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/midtrans/create-transaction', [MidtransController::class, 'createTransaction']);
+        Route::post('/midtrans/callback', [MidtransController::class, 'paymentCallback']);
     });
+    Route::get('/pembayaran/success/{order_id}', [PembayaranController::class, 'success']);
+
+});
 
 // Google OAuth Routes
 
 Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
 
-
-// Route::post('/aktivasi-tiket', [App\Http\Controllers\DetailPemesananController::class, 'aktivasiTiket'])->name('tiket.aktivasi');
 Route::get('/qr/activate/url', [DetailPemesananController::class, 'activateQrFromUrl'])->name('qr.activate.url');
-

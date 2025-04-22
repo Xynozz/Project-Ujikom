@@ -78,7 +78,11 @@
             <div class="ticket-purchase-box">
                 <form action="{{ url('/detail-wisata/' . $wisata->id) }}" method="POST" class="ticket-order-form">
                     @csrf
+
                     <h4>Pemesanan Tiket</h4>
+
+                    {{-- (Opsional) Hidden input untuk wisata_id --}}
+                    <input type="hidden" name="wisata_id" value="{{ $wisata->id }}">
 
                     {{-- Pilih Tanggal Kunjungan --}}
                     <div class="form-group">
@@ -93,9 +97,9 @@
                         <select name="tiket_id" id="tiket_id" class="form-control" required onchange="updateHarga()">
                             <option value="" disabled selected>-- Pilih Tiket --</option>
                             @foreach ($tiket as $data)
-                            <option value="{{ $data->id }}" data-harga="{{ $data->harga_tiket }}">
-                                {{ $data->nama_tiket }} - Rp {{ number_format($data->harga_tiket, 0, ',', '.') }}
-                            </option>
+                                <option value="{{ $data->id }}" data-harga="{{ $data->harga_tiket }}">
+                                    {{ $data->nama_tiket }} - Rp {{ number_format($data->harga_tiket, 0, ',', '.') }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -117,11 +121,12 @@
                         <span id="totalHarga">Rp 0</span>
                     </div>
 
-                    {{-- Submit --}}
+                    {{-- Tombol Submit --}}
                     <button type="submit" class="submit-btn">
                         <i class="fas fa-ticket-alt"></i> Pesan Sekarang
                     </button>
                 </form>
+
             </div>
         </div>
     </div>
